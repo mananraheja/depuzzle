@@ -200,12 +200,12 @@ mypy llmprof
 ## Roadmap
 
 ### v1.0
-[x] Profiler run
-[x] JSON trace loading
-[x] Trace validation
-[x] Latency metrics
-[x] Run comparison
-[x] CI pipeline
+- [x] Profiler run
+- [x] JSON trace loading
+- [x] Trace validation
+- [x] Latency metrics
+- [x] Run comparison
+- [x] CI pipeline
 
 ### Future
 - Live inference profiling
