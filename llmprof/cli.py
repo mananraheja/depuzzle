@@ -4,6 +4,7 @@ from llmprof.backends.ollama import OllamaBackend
 from llmprof.profiler import Profiler
 from llmprof.exporters import save_trace
 from llmprof.metrics import Metrics
+from llmprof.loaders import load_trace
 
 
 app = typer.Typer(
@@ -15,6 +16,28 @@ app = typer.Typer(
 profile_app = typer.Typer(
     help="Profile LLM inference requests."
 )
+
+
+def print_comparison(summary1, summary2):
+
+    typer.echo("\n--- Comparison ---")
+
+    typer.echo(
+        f"{'Metric':<25}{'Run 1':<20}{'Run 2':<20}"
+    )
+
+    typer.echo("-" * 65)
+
+    for key in [
+        "model",
+        "tokens",
+        "latency_seconds",
+        "ttft_seconds",
+        "tokens_per_second",
+    ]:
+        typer.echo(
+            f"{key:<25}{str(summary1[key]):<20}{str(summary2[key]):<20}"
+        )
 
 
 def print_summary(trace):
@@ -80,6 +103,38 @@ def run(
         typer.echo(
             f"\nTrace saved to {output}"
         )
+
+
+@app.command()
+def compare(
+    run1: str,
+    run2: str,
+):
+    """
+    Compare two inference traces.
+    """
+
+    typer.echo(f"Comparing {run1}")
+    typer.echo(f"against {run2}")
+
+    try:
+        trace1 = load_trace(run1)
+        trace2 = load_trace(run2)
+
+    except FileNotFoundError as e:
+        typer.echo(f"Error: {e}", err=True)
+        raise typer.Exit(code=1)
+    
+    metrics1 = Metrics(trace1)
+    metrics2 = Metrics(trace2)
+
+    summary1 = metrics1.summary()
+    summary2 = metrics2.summary()
+
+    print_comparison(
+        summary1,
+        summary2,
+    )
 
 
 app.add_typer(
