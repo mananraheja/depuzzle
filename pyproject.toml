@@ -4,8 +4,13 @@ version = "0.1.0"
 description = "Inference profiler for local LLMs"
 requires-python = ">=3.12,<3.14"
 
-dependencies = []
+dependencies = [
+    "typer"
+]
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[project.scripts]
+llmprof = "llmprof.cli:app"
