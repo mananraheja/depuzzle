@@ -1,6 +1,8 @@
-# LLMProf
+# llmprof
 
-Inference profiler for local LLMs.
+[![CI](https://github.com/mananraheja/llmprof/actions/workflows/ci.yml/badge.svg)](https://github.com/mananraheja/llmprof/actions)
+
+A lightweight profiler for measuring and comparing LLM inference performance.
 
 ## Development
 
