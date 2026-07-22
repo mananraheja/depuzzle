@@ -28,16 +28,16 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest
+          python -m pytest
 
       - name: Check formatting
         run: |
-          black --check .
+          python -m black --check .
 
       - name: Run linter
         run: |
-          ruff check .
+          python -m ruff check .
 
       - name: Type check
         run: |
-          mypy llmprof
+          python -m mypy llmprof
