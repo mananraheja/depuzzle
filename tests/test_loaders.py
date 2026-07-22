@@ -3,7 +3,6 @@ import pytest
 
 from llmprof.loaders import load_trace
 
-
 # def test_load_trace(tmp_path):
 
 #     trace_data = {
@@ -94,7 +93,7 @@ def test_load_valid_trace(tmp_path):
 
 
 def test_file_not_found():
-    
+
     with pytest.raises(FileNotFoundError):
         load_trace("does_not_exist.json")
 
