@@ -12,7 +12,6 @@ class OllamaBackend:
         self.model = model
         self.host = host.rstrip("/")
 
-
     def generate(self, prompt: str):
 
         url = f"{self.host}/api/chat"

@@ -2,9 +2,7 @@ from llmprof.backends.ollama import OllamaBackend
 
 
 def main():
-    backend = OllamaBackend(
-        model="qwen2.5:3b"
-    )
+    backend = OllamaBackend(model="qwen2.5:3b")
 
     prompt = "Explain virtual memory in one paragraph."
 

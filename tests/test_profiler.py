@@ -15,13 +15,9 @@ def test_profiler_creates_trace():
 
     backend = FakeBackend()
 
-    profiler = Profiler(
-        backend
-    )
+    profiler = Profiler(backend)
 
-    trace = profiler.run(
-        "Say hello"
-    )
+    trace = profiler.run("Say hello")
 
     assert trace.model == "fake-model"
 
@@ -34,13 +30,9 @@ def test_profiler_records_latency():
 
     backend = FakeBackend()
 
-    profiler = Profiler(
-        backend
-    )
+    profiler = Profiler(backend)
 
-    trace = profiler.run(
-        "Test"
-    )
+    trace = profiler.run("Test")
 
     assert trace.total_latency >= 0
 
@@ -49,12 +41,8 @@ def test_first_token_latency_exists():
 
     backend = FakeBackend()
 
-    profiler = Profiler(
-        backend
-    )
+    profiler = Profiler(backend)
 
-    trace = profiler.run(
-        "Test"
-    )
+    trace = profiler.run("Test")
 
     assert trace.time_to_first_token is not None

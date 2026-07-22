@@ -30,9 +30,7 @@ def test_load_trace(tmp_path):
     with open(file_path, "w") as file:
         json.dump(trace_data, file)
 
-    trace = load_trace(
-        str(file_path)
-    )
+    trace = load_trace(str(file_path))
 
     assert trace.model == "qwen2.5:3b"
     assert len(trace.tokens) == 2
@@ -44,3 +42,19 @@ def test_load_missing_trace():
 
     with pytest.raises(FileNotFoundError):
         load_trace("does_not_exist.json")
+
+
+def test_invalid_json(tmp_path):
+    trace = tmp_path / "invalid.json"
+    trace.write_text('{"latency": 123,,}', encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Invalid JSON"):
+        load_trace(trace)
+
+
+def test_empty_trace_file(tmp_path):
+    trace = tmp_path / "empty.json"
+    trace.write_text("", encoding="utf-8")
+
+    with pytest.raises(ValueError, match="empty"):
+        load_trace(trace)

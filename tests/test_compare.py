@@ -52,10 +52,8 @@ def test_compare_metrics():
         token_count=100,
     )
 
-
     summary1 = Metrics(trace1).summary()
     summary2 = Metrics(trace2).summary()
-
 
     assert summary1["model"] == "qwen2.5:3b"
     assert summary2["model"] == "llama3.2:3b"

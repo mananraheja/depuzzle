@@ -6,25 +6,20 @@ from llmprof.exporters import save_trace
 from llmprof.metrics import Metrics
 from llmprof.loaders import load_trace
 
-
 app = typer.Typer(
     name="llmprof",
     help="Inference profiler for local LLMs.",
 )
 
 
-profile_app = typer.Typer(
-    help="Profile LLM inference requests."
-)
+profile_app = typer.Typer(help="Profile LLM inference requests.")
 
 
 def print_comparison(summary1, summary2):
 
     typer.echo("\n--- Comparison ---")
 
-    typer.echo(
-        f"{'Metric':<25}{'Run 1':<20}{'Run 2':<20}"
-    )
+    typer.echo(f"{'Metric':<25}{'Run 1':<20}{'Run 2':<20}")
 
     typer.echo("-" * 65)
 
@@ -35,9 +30,7 @@ def print_comparison(summary1, summary2):
         "ttft_seconds",
         "tokens_per_second",
     ]:
-        typer.echo(
-            f"{key:<25}{str(summary1[key]):<20}{str(summary2[key]):<20}"
-        )
+        typer.echo(f"{key:<25}{str(summary1[key]):<20}{str(summary2[key]):<20}")
 
 
 def print_summary(trace):
@@ -52,9 +45,7 @@ def print_summary(trace):
     typer.echo("\n--- Trace Summary ---")
 
     for key, value in summary.items():
-        typer.echo(
-            f"{key}: {value}"
-        )
+        typer.echo(f"{key}: {value}")
 
 
 @profile_app.command()
@@ -63,12 +54,10 @@ def run(
         "qwen2.5:3b",
         help="LLM model to use.",
     ),
-
     prompt: str = typer.Option(
         "Explain virtual memory in one paragraph.",
         help="Prompt to send to the model.",
     ),
-
     output: str = typer.Option(
         None,
         help="Save trace to JSON file.",
@@ -78,31 +67,18 @@ def run(
     Profile a single LLM inference request.
     """
 
-    backend = OllamaBackend(
-        model=model
-    )
+    backend = OllamaBackend(model=model)
 
-    profiler = Profiler(
-        backend
-    )
+    profiler = Profiler(backend)
 
-    trace = profiler.run(
-        prompt
-    )
+    trace = profiler.run(prompt)
 
-    print_summary(
-        trace
-    )
+    print_summary(trace)
 
     if output:
-        save_trace(
-            trace,
-            output
-        )
+        save_trace(trace, output)
 
-        typer.echo(
-            f"\nTrace saved to {output}"
-        )
+        typer.echo(f"\nTrace saved to {output}")
 
 
 @app.command()
@@ -124,7 +100,7 @@ def compare(
     except FileNotFoundError as e:
         typer.echo(f"Error: {e}", err=True)
         raise typer.Exit(code=1)
-    
+
     metrics1 = Metrics(trace1)
     metrics2 = Metrics(trace2)
 
