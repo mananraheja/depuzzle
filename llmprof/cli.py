@@ -154,9 +154,6 @@ def compare(
     summary1 = metrics1.summary()
     summary2 = metrics2.summary()
 
-    typer.echo(summary1)
-    typer.echo(summary2)
-
     print_comparison(
         summary1,
         summary2,
