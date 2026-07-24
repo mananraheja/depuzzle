@@ -5,7 +5,7 @@ from llmprof.models import InferenceTrace, TokenEvent
 
 def test_token_event_creation():
 
-    timestamp = datetime.now(UTC)
+    timestamp = datetime(2026, 7, 24, tzinfo=UTC)
 
     event = TokenEvent(
         token="hello",
@@ -18,7 +18,7 @@ def test_token_event_creation():
 
 def test_inference_trace_creation():
 
-    now = datetime.now(UTC)
+    now = datetime(2026, 7, 24, tzinfo=UTC)
 
     trace = InferenceTrace(
         model="qwen2.5:3b",
@@ -44,7 +44,7 @@ def test_inference_trace_creation():
 
 def test_empty_trace():
 
-    now = datetime.now(UTC)
+    now = datetime(2026, 7, 24, tzinfo=UTC)
 
     trace = InferenceTrace(
         model="test-model",

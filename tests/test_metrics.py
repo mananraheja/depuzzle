@@ -76,12 +76,12 @@ def test_tokens_per_second_zero_latency():
     trace = InferenceTrace(
         model="test-model",
         prompt="hello",
-        start_time=datetime.now(UTC),
-        end_time=datetime.now(UTC),
+        start_time=datetime(2026, 7, 24, tzinfo=UTC),
+        end_time=datetime(2026, 7, 24, tzinfo=UTC),
         tokens=[
             TokenEvent(
                 token="hello",
-                timestamp=datetime.now(UTC),
+                timestamp=datetime(2026, 7, 24, tzinfo=UTC),
             )
         ],
         total_latency=0,

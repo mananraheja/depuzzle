@@ -20,15 +20,15 @@ def create_trace(
         tokens.append(
             TokenEvent(
                 token=f"token-{i}",
-                timestamp=datetime.now(UTC),
+                timestamp=datetime(2026, 7, 24, tzinfo=UTC),
             )
         )
 
     return InferenceTrace(
         model=model,
         prompt="test prompt",
-        start_time=datetime.now(UTC),
-        end_time=datetime.now(UTC),
+        start_time=datetime(2026, 7, 24, tzinfo=UTC),
+        end_time=datetime(2026, 7, 24, tzinfo=UTC),
         tokens=tokens,
         total_latency=latency,
         time_to_first_token=ttft,
