@@ -1,4 +1,7 @@
 import typer
+from rich import box
+from rich.console import Console
+from rich.table import Table
 
 from llmprof import __version__
 from llmprof.backends.ollama import OllamaBackend
@@ -6,6 +9,8 @@ from llmprof.exporters import save_trace
 from llmprof.loaders import load_trace
 from llmprof.metrics import Metrics
 from llmprof.profiler import Profiler
+
+console = Console()
 
 app = typer.Typer(
     name="llmprof",
@@ -30,25 +35,28 @@ def format_change(key, value1, value2):
         "ttft_seconds",
     ]:
         if change > 0:
-            return f"{change:+.2f}% (slower)"
+            return f"[red]{change:+.2f}% (slower)[/red]"
         else:
-            return f"{change:+.2f}% (faster)"
+            return f"[green]{change:+.2f}% (faster)[/green]"
 
     if key == "tokens_per_second":
         if change > 0:
-            return f"{change:+.2f}% (better)"
+            return f"[green]{change:+.2f}% (better)[/green]"
         else:
-            return f"{change:+.2f}% (worse)"
+            return f"[red]{change:+.2f}% (worse)[/red]"
 
     return f"{change:+.2f}%"
 
 
 def print_comparison(summary1, summary2):
+    table = Table(
+        title="Comparison", box=box.SIMPLE_HEAVY, show_header=True, header_style="bold"
+    )
 
-    typer.echo("\n--- Comparison ---")
-
-    typer.echo(f"{'Metric':<25}{'Run 1':<20}{'Run 2':<20}{'Change':<25}")
-    typer.echo("-" * 90)
+    table.add_column("Metric", style="white", width=20)
+    table.add_column("Run 1", width=20)
+    table.add_column("Run 2", width=20)
+    table.add_column("Change", width=25)
 
     for key in [
         "model",
@@ -57,15 +65,14 @@ def print_comparison(summary1, summary2):
         "ttft_seconds",
         "tokens_per_second",
     ]:
-        change = format_change(
-            key,
-            summary1[key],
-            summary2[key],
-        )
+        value1 = summary1[key]
+        value2 = summary2[key]
 
-    typer.echo(
-        f"{key:<25}" f"{summary1[key]!s:<20}" f"{summary2[key]!s:<20}" f"{change:<25}"
-    )
+        change = format_change(key, value1, value2)
+
+        table.add_row(key, str(value1), str(value2), change)
+
+    console.print(table)
 
 
 def print_summary(trace):
@@ -146,6 +153,9 @@ def compare(
 
     summary1 = metrics1.summary()
     summary2 = metrics2.summary()
+
+    typer.echo(summary1)
+    typer.echo(summary2)
 
     print_comparison(
         summary1,
