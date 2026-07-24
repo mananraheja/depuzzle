@@ -16,13 +16,39 @@ app = typer.Typer(
 profile_app = typer.Typer(help="Profile LLM inference requests.")
 
 
+def format_change(key, value1, value2):
+    if not isinstance(value1, (int, float)):
+        return "-"
+
+    if value1 == 0:
+        return "-"
+
+    change = ((value2 - value1) / value1) * 100
+
+    if key in [
+        "latency_seconds",
+        "ttft_seconds",
+    ]:
+        if change > 0:
+            return f"{change:+.2f}% (slower)"
+        else:
+            return f"{change:+.2f}% (faster)"
+
+    if key == "tokens_per_second":
+        if change > 0:
+            return f"{change:+.2f}% (better)"
+        else:
+            return f"{change:+.2f}% (worse)"
+
+    return f"{change:+.2f}%"
+
+
 def print_comparison(summary1, summary2):
 
     typer.echo("\n--- Comparison ---")
 
-    typer.echo(f"{'Metric':<25}{'Run 1':<20}{'Run 2':<20}")
-
-    typer.echo("-" * 65)
+    typer.echo(f"{'Metric':<25}{'Run 1':<20}{'Run 2':<20}{'Change':<25}")
+    typer.echo("-" * 90)
 
     for key in [
         "model",
@@ -31,7 +57,15 @@ def print_comparison(summary1, summary2):
         "ttft_seconds",
         "tokens_per_second",
     ]:
-        typer.echo(f"{key:<25}{summary1[key]!s:<20}{summary2[key]!s:<20}")
+        change = format_change(
+            key,
+            summary1[key],
+            summary2[key],
+        )
+
+    typer.echo(
+        f"{key:<25}" f"{summary1[key]!s:<20}" f"{summary2[key]!s:<20}" f"{change:<25}"
+    )
 
 
 def print_summary(trace):
