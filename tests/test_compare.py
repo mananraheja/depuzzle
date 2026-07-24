@@ -1,11 +1,10 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
+from llmprof.metrics import Metrics
 from llmprof.models import (
     InferenceTrace,
     TokenEvent,
 )
-
-from llmprof.metrics import Metrics
 
 
 def create_trace(
@@ -21,15 +20,15 @@ def create_trace(
         tokens.append(
             TokenEvent(
                 token=f"token-{i}",
-                timestamp=datetime.now(),
+                timestamp=datetime.now(UTC),
             )
         )
 
     return InferenceTrace(
         model=model,
         prompt="test prompt",
-        start_time=datetime.now(),
-        end_time=datetime.now(),
+        start_time=datetime.now(UTC),
+        end_time=datetime.now(UTC),
         tokens=tokens,
         total_latency=latency,
         time_to_first_token=ttft,

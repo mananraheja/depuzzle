@@ -1,11 +1,11 @@
-from datetime import datetime
+from datetime import UTC, datetime
 
-from llmprof.models import TokenEvent, InferenceTrace
+from llmprof.models import InferenceTrace, TokenEvent
 
 
 def test_token_event_creation():
 
-    timestamp = datetime.now()
+    timestamp = datetime.now(UTC)
 
     event = TokenEvent(
         token="hello",
@@ -18,7 +18,7 @@ def test_token_event_creation():
 
 def test_inference_trace_creation():
 
-    now = datetime.now()
+    now = datetime.now(UTC)
 
     trace = InferenceTrace(
         model="qwen2.5:3b",
@@ -44,7 +44,7 @@ def test_inference_trace_creation():
 
 def test_empty_trace():
 
-    now = datetime.now()
+    now = datetime.now(UTC)
 
     trace = InferenceTrace(
         model="test-model",

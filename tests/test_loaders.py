@@ -1,4 +1,5 @@
 import json
+
 import pytest
 
 from llmprof.loaders import load_trace

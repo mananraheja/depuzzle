@@ -1,9 +1,9 @@
 import time
-from datetime import datetime
+from datetime import UTC, datetime
 
 from llmprof.models import (
-    TokenEvent,
     InferenceTrace,
+    TokenEvent,
 )
 
 
@@ -19,14 +19,14 @@ class Profiler:
 
         events: list[TokenEvent] = []
 
-        start_time = datetime.now()
+        start_time = datetime.now(UTC)
         start_counter = time.perf_counter()
 
         first_token_latency = None
 
         for token in self.backend.generate(prompt):
 
-            current_time = datetime.now()
+            current_time = datetime.now(UTC)
 
             if first_token_latency is None:
                 first_token_latency = time.perf_counter() - start_counter
@@ -38,7 +38,7 @@ class Profiler:
 
             events.append(event)
 
-        end_time = datetime.now()
+        end_time = datetime.now(UTC)
 
         total_latency = time.perf_counter() - start_counter
 

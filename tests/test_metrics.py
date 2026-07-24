@@ -1,9 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from llmprof.models import TokenEvent, InferenceTrace
 from llmprof.metrics import Metrics
+from llmprof.models import InferenceTrace, TokenEvent
 
 
 @pytest.fixture
@@ -76,12 +76,12 @@ def test_tokens_per_second_zero_latency():
     trace = InferenceTrace(
         model="test-model",
         prompt="hello",
-        start_time=datetime.now(),
-        end_time=datetime.now(),
+        start_time=datetime.now(UTC),
+        end_time=datetime.now(UTC),
         tokens=[
             TokenEvent(
                 token="hello",
-                timestamp=datetime.now(),
+                timestamp=datetime.now(UTC),
             )
         ],
         total_latency=0,

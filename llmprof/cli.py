@@ -1,10 +1,10 @@
 import typer
 
 from llmprof.backends.ollama import OllamaBackend
-from llmprof.profiler import Profiler
 from llmprof.exporters import save_trace
-from llmprof.metrics import Metrics
 from llmprof.loaders import load_trace
+from llmprof.metrics import Metrics
+from llmprof.profiler import Profiler
 
 app = typer.Typer(
     name="llmprof",
@@ -30,7 +30,7 @@ def print_comparison(summary1, summary2):
         "ttft_seconds",
         "tokens_per_second",
     ]:
-        typer.echo(f"{key:<25}{str(summary1[key]):<20}{str(summary2[key]):<20}")
+        typer.echo(f"{key:<25}{summary1[key]!s:<20}{summary2[key]!s:<20}")
 
 
 def print_summary(trace):

@@ -17,6 +17,14 @@ dev = [
     "pytest",
 ]
 
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "TRY", "DTZ"]
+ignore = [
+    "TRY004",
+    "TRY003",
+    "B904",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
