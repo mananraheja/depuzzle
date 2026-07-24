@@ -43,7 +43,7 @@ def test_inference_trace_creation():
 
 
 def test_empty_trace():
-    
+
     now = datetime.now()
 
     trace = InferenceTrace(
