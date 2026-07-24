@@ -8,6 +8,61 @@ A lightweight Python tool for analyzing and comparing LLM inference performance 
 
 ---
 
+## Usage
+
+### Profile an LLM inference run
+
+LLMProf can profile local LLM inference requests and capture token-level timing information.
+
+Example:
+
+```bash
+llmprof profile run \
+  --model qwen2.5:3b \
+  --prompt "Explain virtual memory in one paragraph." \
+  --output run1.json
+```
+
+Example output:
+
+```bash
+--- Trace Summary ---
+
+model: qwen2.5:3b
+tokens: 633
+latency_seconds: 31.13s
+ttft_seconds: 4.71s
+tokens_per_second: 20.33
+
+Trace saved to run1.json
+```
+
+### Compare inference runs
+
+LLMProf can compare two inference traces to evaluate model performance differences.
+
+Example:
+
+```bash
+llmprof compare sample_traces/run1.json sample_traces/run2.json
+```
+
+Example output:
+
+```bash
+--- Comparison ---
+
+Metric                   Run 1               Run 2               Change
+------------------------------------------------------------------------------------------
+model                    qwen2.5:3b          llama3.2:3b          -
+tokens                   633                 555                 -12.32%
+latency_seconds          31.13               28.41               -8.74% (faster)
+ttft_seconds             4.71                6.98                +48.07% (slower)
+tokens_per_second        20.33               19.53               -3.93% (worse)
+```
+
+---
+
 ## Features
 
 ### v1.0
