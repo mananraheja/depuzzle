@@ -1,5 +1,6 @@
 import typer
 
+from llmprof import __version__
 from llmprof.backends.ollama import OllamaBackend
 from llmprof.exporters import save_trace
 from llmprof.loaders import load_trace
@@ -79,6 +80,11 @@ def run(
         save_trace(trace, output)
 
         typer.echo(f"\nTrace saved to {output}")
+
+
+@app.command()
+def version():
+    typer.echo(f"llmprof {__version__}")
 
 
 @app.command()
