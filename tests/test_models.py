@@ -24,7 +24,7 @@ def test_inference_trace_creation():
         model="qwen2.5:3b",
         prompt="Explain CPU cache",
         start_time=now,
-        end_time=now(),
+        end_time=now,
         tokens=[
             TokenEvent(
                 token="Hello",
