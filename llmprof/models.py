@@ -9,6 +9,14 @@ class TokenEvent:
 
 
 @dataclass
+class BackendInfo:
+    backend: str
+    cpu_offload_percent: int
+    gpu_offload_percent: int
+    context_length: int
+
+
+@dataclass
 class InferenceTrace:
     model: str
     prompt: str
