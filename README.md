@@ -59,7 +59,7 @@ Example output:
 
 Metric                   Run 1               Run 2               Change
 ------------------------------------------------------------------------------------------
-model                    qwen2.5:3b          llama3.2:3b          -
+model                    qwen2.5:3b          llama3.2:3b         -
 tokens                   633                 555                 -12.32%
 latency_seconds          31.13               28.41               -8.74% (faster)
 ttft_seconds             4.71                6.98                +48.07% (slower)
