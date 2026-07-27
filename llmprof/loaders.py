@@ -3,6 +3,7 @@ from datetime import datetime
 from pathlib import Path
 
 from llmprof.models import (
+    BackendInfo,
     InferenceTrace,
     TokenEvent,
 )
@@ -56,6 +57,15 @@ def load_trace(path: str | Path) -> InferenceTrace:
     except ValueError as e:
         raise ValueError("Invalid trace format: invalid timestamp") from e
 
+    backend_info = None
+
+    if data.get("backend_info"):
+        backend_info = BackendInfo(
+            backend=data["backend_info"]["backend"],
+            processor=data["backend_info"]["processor"],
+            context_length=data["backend_info"]["context_length"],
+        )
+
     validate_trace_schema(data, str(path))
 
     tokens = [
@@ -74,4 +84,5 @@ def load_trace(path: str | Path) -> InferenceTrace:
         tokens=tokens,
         total_latency=data["total_latency"],
         time_to_first_token=data["time_to_first_token"],
+        backend_info=backend_info,
     )

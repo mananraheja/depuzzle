@@ -48,15 +48,7 @@ def format_change(key, value1, value2):
     return f"{change:+.2f}%"
 
 
-def print_comparison(summary1, summary2):
-    table = Table(
-        title="Comparison", box=box.SIMPLE_HEAVY, show_header=True, header_style="bold"
-    )
-
-    table.add_column("Metric", style="white", width=20)
-    table.add_column("Run 1", width=20)
-    table.add_column("Run 2", width=20)
-    table.add_column("Change", width=25)
+def add_metric_comparison(table, summary1, summary2):
 
     for key in [
         "model",
@@ -70,7 +62,71 @@ def print_comparison(summary1, summary2):
 
         change = format_change(key, value1, value2)
 
-        table.add_row(key, str(value1), str(value2), change)
+        table.add_row(
+            key,
+            str(value1),
+            str(value2),
+            change,
+        )
+
+
+def add_runtime_comparison(table, summary1, summary2):
+    runtime1 = summary1.get("runtime")
+    runtime2 = summary2.get("runtime")
+
+    print(runtime1)
+    print(runtime2)
+
+    if not runtime1 and not runtime2:
+        return
+
+    table.add_section()
+
+    table.add_row(
+        "[bold]runtime[/bold]",
+        "",
+        "",
+        "",
+    )
+
+    for key in [
+        "backend",
+        "processor",
+        "context_length",
+    ]:
+        value1 = runtime1.get(key, "N/A") if runtime1 else "N/A"
+        value2 = runtime2.get(key, "N/A") if runtime2 else "N/A"
+
+        if value1 == value2:
+            change = "same"
+        elif value1 == "N/A" or value2 == "N/A":
+            change = "N/A"
+        else:
+            change = "changed"
+
+        table.add_row(
+            f"  {key}",
+            str(value1),
+            str(value2),
+            change,
+        )
+
+
+def print_comparison(summary1, summary2):
+    table = Table(
+        title="Comparison",
+        box=box.SIMPLE_HEAVY,
+        show_header=True,
+        header_style="bold",
+    )
+
+    table.add_column("Metric", style="white", width=20)
+    table.add_column("Run 1", width=20)
+    table.add_column("Run 2", width=20)
+    table.add_column("Change", width=25)
+
+    add_metric_comparison(table, summary1, summary2)
+    add_runtime_comparison(table, summary1, summary2)
 
     console.print(table)
 

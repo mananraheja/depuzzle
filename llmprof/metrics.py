@@ -35,11 +35,11 @@ class Metrics:
             "tokens_per_second": round(self.tokens_per_second(), 2),
         }
 
-        if self.trace.backend_info:
+        if self.runtime_details() is not None:
             summary["runtime"] = {
-                "backend": self.trace.backend_info.backend,
-                "processor": self.trace.backend_info.processor,
-                "context_length": self.trace.backend_info.context_length,
+                "backend": self.runtime_details().backend,
+                "processor": self.runtime_details().processor,
+                "context_length": self.runtime_details().context_length,
             }
 
         return summary
