@@ -34,6 +34,11 @@ latency_seconds: 31.13s
 ttft_seconds: 4.71s
 tokens_per_second: 20.33
 
+runtime:
+  backend: ollama
+  processor: 72%/28% CPU/GPU
+  context_length: 131072
+
 Trace saved to run1.json
 ```
 
