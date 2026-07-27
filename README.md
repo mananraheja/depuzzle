@@ -64,6 +64,12 @@ tokens                   633                 555                 -12.32%
 latency_seconds          31.13               28.41               -8.74% (faster)
 ttft_seconds             4.71                6.98                +48.07% (slower)
 tokens_per_second        20.33               19.53               -3.93% (worse)
+
+
+runtime
+    backend             ollama               ollama               same
+    processor           72%/28% CPU/GPU      100% CPU             changed
+    context_length      131072               131072               same
 ```
 
 ---
