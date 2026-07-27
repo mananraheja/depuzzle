@@ -76,7 +76,7 @@ runtime
 
 ## Features
 
-### v1.0
+### v0.1.0
 
 - Run profiler for Ollama hosted models on MacBook
 - Load LLM inference traces from JSON files
