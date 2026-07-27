@@ -1,8 +1,13 @@
+import shutil
 import subprocess
 
 import pytest
 
 from llmprof.backends.ollama import OllamaBackend
+
+
+def ollama_available() -> bool:
+    return shutil.which("ollama") is not None
 
 
 def ollama_model_running() -> bool:
@@ -19,6 +24,9 @@ def ollama_model_running() -> bool:
 
 @pytest.mark.integration
 def test_backend_info():
+
+    if not ollama_available():
+        pytest.skip("Ollama binary not installed")
 
     if not ollama_model_running():
         pytest.skip("No running Ollama model available")
