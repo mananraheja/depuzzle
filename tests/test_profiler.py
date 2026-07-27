@@ -1,3 +1,4 @@
+from llmprof.backends.base import BackendInfo
 from llmprof.profiler import Profiler
 
 
@@ -9,6 +10,13 @@ class FakeBackend:
 
         yield "Hello"
         yield " world"
+
+    def get_info(self):
+        return BackendInfo(
+            backend="fake",
+            processor="72%/28% CPU/GPU",
+            context_length=4096,
+        )
 
 
 def test_profiler_creates_trace():

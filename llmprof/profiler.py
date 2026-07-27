@@ -50,4 +50,5 @@ class Profiler:
             tokens=events,
             total_latency=total_latency,
             time_to_first_token=first_token_latency,
+            backend_info=self.backend.get_info(),
         )

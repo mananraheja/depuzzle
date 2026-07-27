@@ -2,6 +2,7 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
+from llmprof.backends.base import BackendInfo
 from llmprof.metrics import Metrics
 from llmprof.models import InferenceTrace, TokenEvent
 
@@ -25,6 +26,12 @@ def sample_trace():
         ),
     ]
 
+    backend_info = BackendInfo(
+        backend="test-backend",
+        processor="x%/y% CPU/GPU",
+        context_length=1000,
+    )
+
     return InferenceTrace(
         model="test-model",
         prompt="Say hello",
@@ -33,6 +40,7 @@ def sample_trace():
         tokens=tokens,
         total_latency=10.0,
         time_to_first_token=1.0,
+        backend_info=backend_info,
     )
 
 
@@ -69,6 +77,11 @@ def test_summary(sample_trace):
         "latency_seconds": 10.0,
         "ttft_seconds": 1.0,
         "tokens_per_second": pytest.approx(0.3),
+        "runtime": {
+            "backend": "test-backend",
+            "processor": "x%/y% CPU/GPU",
+            "context_length": 1000,
+        },
     }
 
 

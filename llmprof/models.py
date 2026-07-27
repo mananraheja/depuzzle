@@ -11,8 +11,7 @@ class TokenEvent:
 @dataclass
 class BackendInfo:
     backend: str
-    cpu_offload_percent: int
-    gpu_offload_percent: int
+    processor: str
     context_length: int
 
 
@@ -28,6 +27,8 @@ class InferenceTrace:
 
     total_latency: float
     time_to_first_token: float | None
+
+    backend_info: BackendInfo | None = None
 
 
 @dataclass

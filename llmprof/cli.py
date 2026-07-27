@@ -87,7 +87,13 @@ def print_summary(trace):
     typer.echo("\n--- Trace Summary ---")
 
     for key, value in summary.items():
-        typer.echo(f"{key}: {value}")
+        if isinstance(value, dict):
+            typer.echo(f"{key}:")
+            for sub_key, sub_value in value.items():
+                typer.echo(f"  {sub_key}: {sub_value}")
+
+        else:
+            typer.echo(f"{key}: {value}")
 
 
 @profile_app.command()
