@@ -6,26 +6,35 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Added `BackendInfo` model to capture inference runtime metadata.
-- Added runtime information to `InferenceTrace`.
-- Added Ollama runtime detection using `ollama ps`.
-- Added processor split (CPU/GPU) to runtime metadata.
-- Added context length to runtime metadata.
-- Added runtime information to saved trace JSON.
-- Added runtime information to profile summary output.
-- Added runtime comparison in `llmprof compare`.
-- Added integration tests for the Ollama backend.
+- Added runtime metadata collection for inference runs.
+- Added backend runtime information to trace summaries:
+  - Backend name
+  - Processor utilization (CPU/GPU split)
+  - Context length
+- Added runtime metadata to JSON trace outputs.
+- Added runtime comparison support for `llmprof compare`.
+- Added shared test fixtures using `conftest.py`.
+- Added integration test coverage for Ollama backend functionality.
 
 ### Changed
 
-- Separated unit tests from integration tests.
-- Updated CI to skip integration tests by default.
-- Improved trace schema to support runtime metadata.
+- Updated trace summaries to display runtime information separately from inference metrics.
+- Improved comparison output by separating runtime configuration from performance metrics.
+- Refactored tests to use reusable fake backends and fake traces.
+- Improved handling of missing runtime information.
 
 ### Fixed
 
-- Improved handling of traces without runtime metadata.
-- Improved parsing of `ollama ps` output.
+- Fixed trace summary output formatting.
+- Fixed comparison handling when runtime metadata is unavailable.
+- Fixed CI failures caused by integration tests requiring Ollama.
+
+### Testing
+
+- Added unit tests for runtime metadata.
+- Added tests for runtime comparison.
+- Added Ollama integration test markers.
+- Improved GitHub Actions CI workflow.
 
 ## [0.1.0] - 2026-07-24
 
