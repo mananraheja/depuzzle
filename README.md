@@ -2,9 +2,9 @@
 
 [![CI](https://github.com/mananraheja/llmprof/actions/workflows/ci.yml/badge.svg)](https://github.com/mananraheja/llmprof/actions)
 
-A lightweight Python tool for analyzing and comparing LLM inference performance traces.
+A lightweight Python tool for profiling, analyzing, and comparing LLM inference performance.
 
-`llmprof` helps developers measure and compare inference characteristics such as latency, time-to-first-token, and token generation performance.
+`llmprof` helps developers profile local LLM inference runs, capture token-level traces, and compare performance across models and configurations.
 
 ---
 
@@ -76,15 +76,34 @@ runtime
 
 ## Features
 
-### v0.1.0
-
-- Run profiler for Ollama hosted models on MacBook
-- Load LLM inference traces from JSON files
-- Validate trace format and schema
-- Calculate inference performance metrics
-- Compare two inference runs
-- Identify performance regressions or improvements
+- Profile local LLM inference runs
+- Capture token-level inference traces
+- Measure:
+  - Total latency
+  - Time to First Token (TTFT)
+  - Tokens per second
+- Record runtime information
+  - Backend
+  - CPU/GPU processor split
+  - Context length
+- Export traces as JSON
+- Compare inference runs
 - Automated testing with GitHub Actions
+
+---
+
+## Supported Backends
+
+Current:
+
+- Ollama
+
+Planned:
+
+- MLX
+- llama.cpp
+- vLLM
+- TensorRT-LLM
 
 ---
 
@@ -164,7 +183,12 @@ Tokens/sec              20.4        25.1        +23%
     }
   ],
   "total_latency": 12.0,
-  "time_to_first_token": 1.0
+    "time_to_first_token": 1.0,
+    "backend_info": {
+    "backend": "ollama",
+    "processor": "72%/28% CPU/GPU",
+    "context_length": 131072
+  }
 }
 ```
 
@@ -188,7 +212,7 @@ llmprof profile run
     Profiler
         |
         v
-Inference Backend
+Backend Adapter
         |
         v
   Trace Recorder
@@ -204,6 +228,9 @@ The generated trace contains:
 - token generation timestamps
 - latency measurements
 - time-to-first-token
+- backend information
+- processor utilization
+- context length
 
 ### 2. Analyze and Compare
 
@@ -240,7 +267,12 @@ Core components:
 Run tests:
 
 ```bash
-pytest
+pytest -m "not integration"
+```
+
+Run integration tests (requires Ollama and downloaded local models):
+```bash
+pytest -m integration
 ```
 
 Format code:
@@ -266,22 +298,48 @@ mypy llmprof
 ## Roadmap
 
 ### v0.1.0
-- [x] Profiler run
-- [x] JSON trace loading
-- [x] Trace validation
-- [x] Latency metrics
-- [x] Run comparison
-- [x] CI pipeline
+- [x] Profile local LLM inference runs
+- [x] Export traces to JSON
+- [x] Calculate latency and throughput metrics
+- [x] Compare inference runs
+- [x] GitHub Actions CI
+
+### v0.2.0
+- [x] Backend runtime metadata
+- [x] Runtime information in trace summaries
+- [x] Runtime comparison between inference runs
 
 ### Future
-- Live inference profiling
-- GPU utilization tracking
-- Memory profiling
-- Support for inference backends:
-- llama.cpp
-- MLX
-- vLLM
-- TensorRT-LLM
+
+#### Additional Backends
+- [ ] MLX
+- [ ] llama.cpp
+- [ ] vLLM
+- [ ] TensorRT-LLM
+- [ ] Hugging Face Transformers
+
+#### Profiling
+- [ ] Memory usage
+- [ ] GPU utilization
+- [ ] Live inference profiling
+- [ ] Batch benchmarking
+- [ ] Multi-run statistical summaries
+
+#### Visualization
+- [ ] Interactive timeline visualization
+- [ ] Trace diff visualization
+- [ ] HTML report generation
+
+#### AI Agent Integration
+- [ ] MCP server
+- [ ] Additional MCP tools
+- [ ] Benchmark orchestration through MCP
+
+#### Long-term
+- [ ] Layer-by-layer profiling
+- [ ] Distributed inference profiling
+- [ ] Multi-node benchmarking
+- [ ] Plugin system for custom backends
 
 ---
 
