@@ -6,7 +6,9 @@ requires-python = ">=3.12,<3.14"
 
 dependencies = [
     "typer",
-    "httpx"
+    "httpx",
+    "mcp",
+    "fastmcp",
 ]
 
 [project.optional-dependencies]
@@ -15,6 +17,7 @@ dev = [
     "ruff",
     "mypy",
     "pytest",
+    "pytest-asyncio",
 ]
 
 [tool.ruff.lint]
