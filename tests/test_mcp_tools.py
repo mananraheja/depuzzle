@@ -3,23 +3,16 @@ from llmprof.mcp_server.tools import profile_model
 
 def test_profile_model_returns_summary(monkeypatch):
 
-    from datetime import datetime, UTC
-
     class FakeTrace:
 
         model = "test-model"
 
-        tokens = [
-            "hello",
-            "world",
-            "!"
-        ]
+        tokens = ["hello", "world", "!"]
 
         total_latency = 1.5
         time_to_first_token = 0.2
 
         backend_info = None
-
 
     class FakeProfiler:
 
@@ -28,7 +21,6 @@ def test_profile_model_returns_summary(monkeypatch):
 
         def run(self, prompt):
             return FakeTrace()
-
 
     monkeypatch.setattr(
         "llmprof.mcp_server.tools.Profiler",
