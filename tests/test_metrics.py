@@ -2,9 +2,9 @@ from datetime import UTC, datetime, timedelta
 
 import pytest
 
-from llmprof.backends.base import BackendInfo
-from llmprof.metrics import Metrics
-from llmprof.models import InferenceTrace, TokenEvent
+from depuzzle.backends.base import BackendInfo
+from depuzzle.metrics import Metrics
+from depuzzle.models import InferenceTrace, TokenEvent
 
 
 @pytest.fixture

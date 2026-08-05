@@ -1,7 +1,7 @@
 from datetime import UTC, datetime
 
-from llmprof.metrics import Metrics
-from llmprof.models import (
+from depuzzle.metrics import Metrics
+from depuzzle.models import (
     InferenceTrace,
     TokenEvent,
 )

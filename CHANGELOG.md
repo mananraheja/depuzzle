@@ -12,7 +12,7 @@ All notable changes to this project will be documented in this file.
   - Processor utilization (CPU/GPU split)
   - Context length
 - Added runtime metadata to JSON trace outputs.
-- Added runtime comparison support for `llmprof compare`.
+- Added runtime comparison support for `depuzzle compare`.
 - Added shared test fixtures using `conftest.py`.
 - Added integration test coverage for Ollama backend functionality.
 
@@ -40,7 +40,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- Initial release of llmprof.
+- Initial release of depuzzle.
 - CLI for profiling local LLM inference.
 - Support for profiling Ollama models.
 - Token-level inference trace collection.

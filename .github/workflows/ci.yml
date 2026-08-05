@@ -40,4 +40,4 @@ jobs:
 
       - name: Type check
         run: |
-          python -m mypy llmprof
+          python -m mypy depuzzle

@@ -1,6 +1,6 @@
 import pytest
 
-from llmprof.mcp_server.server import mcp
+from depuzzle.mcp_server.server import mcp
 
 
 @pytest.mark.asyncio

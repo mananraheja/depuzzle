@@ -1,5 +1,5 @@
-from llmprof.backends.base import BackendInfo
-from llmprof.profiler import Profiler
+from depuzzle.backends.base import BackendInfo
+from depuzzle.profiler import Profiler
 
 
 class FakeBackend:
