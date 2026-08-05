@@ -2,7 +2,7 @@ from fastmcp import FastMCP
 
 from .tools import profile_model
 
-mcp = FastMCP("llmprof")
+mcp = FastMCP("depuzzle")
 
 
 mcp.tool()(profile_model)

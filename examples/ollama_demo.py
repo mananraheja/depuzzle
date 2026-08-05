@@ -1,4 +1,4 @@
-from llmprof.backends.ollama import OllamaBackend
+from depuzzle.backends.ollama import OllamaBackend
 
 
 def main():

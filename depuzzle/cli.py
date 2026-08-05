@@ -3,17 +3,17 @@ from rich import box
 from rich.console import Console
 from rich.table import Table
 
-from llmprof import __version__
-from llmprof.backends.ollama import OllamaBackend
-from llmprof.exporters import save_trace
-from llmprof.loaders import load_trace
-from llmprof.metrics import Metrics
-from llmprof.profiler import Profiler
+from depuzzle import __version__
+from depuzzle.backends.ollama import OllamaBackend
+from depuzzle.exporters import save_trace
+from depuzzle.loaders import load_trace
+from depuzzle.metrics import Metrics
+from depuzzle.profiler import Profiler
 
 console = Console()
 
 app = typer.Typer(
-    name="llmprof",
+    name="depuzzle",
     help="Inference profiler for local LLMs.",
 )
 
@@ -187,7 +187,7 @@ def run(
 
 @app.command()
 def version():
-    typer.echo(f"llmprof {__version__}")
+    typer.echo(f"depuzzle {__version__}")
 
 
 @app.command()

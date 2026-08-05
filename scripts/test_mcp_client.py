@@ -2,7 +2,7 @@ import asyncio
 
 from fastmcp import Client
 
-from llmprof.mcp_server.server import mcp
+from depuzzle.mcp_server.server import mcp
 
 
 async def main():

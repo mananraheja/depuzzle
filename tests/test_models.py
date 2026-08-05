@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from llmprof.models import InferenceTrace, TokenEvent
+from depuzzle.models import InferenceTrace, TokenEvent
 
 
 def test_token_event_creation():

@@ -3,8 +3,8 @@ import subprocess
 
 import httpx
 
-from llmprof.backends.base import BaseBackend
-from llmprof.models import BackendInfo
+from depuzzle.backends.base import BaseBackend
+from depuzzle.models import BackendInfo
 
 
 class OllamaBackend(BaseBackend):

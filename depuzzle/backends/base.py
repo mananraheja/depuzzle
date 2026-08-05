@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from llmprof.models import BackendInfo
+from depuzzle.models import BackendInfo
 
 
 class BaseBackend(ABC):

@@ -1,6 +1,6 @@
-from llmprof.backends.ollama import OllamaBackend
-from llmprof.metrics import Metrics
-from llmprof.profiler import Profiler
+from depuzzle.backends.ollama import OllamaBackend
+from depuzzle.metrics import Metrics
+from depuzzle.profiler import Profiler
 
 
 def profile_model(model: str, prompt: str):

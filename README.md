@@ -1,10 +1,10 @@
-# llmprof
+# depuzzle
 
-[![CI](https://github.com/mananraheja/llmprof/actions/workflows/ci.yml/badge.svg)](https://github.com/mananraheja/llmprof/actions)
+[![CI](https://github.com/mananraheja/depuzzle/actions/workflows/ci.yml/badge.svg)](https://github.com/mananraheja/depuzzle/actions)
 
 A lightweight Python tool for profiling, analyzing, and comparing LLM inference performance.
 
-`llmprof` helps developers profile local LLM inference runs, capture token-level traces, and compare performance across models and configurations.
+`depuzzle` helps developers profile local LLM inference runs, capture token-level traces, and compare performance across models and configurations.
 
 ---
 
@@ -12,12 +12,12 @@ A lightweight Python tool for profiling, analyzing, and comparing LLM inference 
 
 ### Profile an LLM inference run
 
-LLMProf can profile local LLM inference requests and capture token-level timing information.
+depuzzle can profile local LLM inference requests and capture token-level timing information.
 
 Example:
 
 ```bash
-llmprof profile run \
+depuzzle profile run \
   --model qwen2.5:3b \
   --prompt "Explain virtual memory in one paragraph." \
   --output run1.json
@@ -44,12 +44,12 @@ Trace saved to run1.json
 
 ### Compare inference runs
 
-LLMProf can compare two inference traces to evaluate model performance differences.
+depuzzle can compare two inference traces to evaluate model performance differences.
 
 Example:
 
 ```bash
-llmprof compare sample_traces/run1.json sample_traces/run2.json
+depuzzle compare sample_traces/run1.json sample_traces/run2.json
 ```
 
 Example output:
@@ -112,8 +112,8 @@ Planned:
 Clone the repository:
 
 ```bash
-git clone https://github.com/mananraheja/llmprof.git
-cd llmprof
+git clone https://github.com/mananraheja/depuzzle.git
+cd depuzzle
 ```
 
 Create a virtual environment:
@@ -142,7 +142,7 @@ pip install -e ".[dev]"
 Run profiler:
 
 ```bash
-llmprof profile run \
+depuzzle profile run \
 --model <model_name> \
 --prompt "<sample_prompt>" \
 --output <path_to_output_file.json>
@@ -151,7 +151,7 @@ llmprof profile run \
 Compare two inference runs:
 
 ```bash
-llmprof compare run1.json run2.json
+depuzzle compare run1.json run2.json
 ```
 
 Example:
@@ -169,7 +169,7 @@ Tokens/sec              20.4        25.1        +23%
 
 ## Trace Format
 
-`llmprof` expects traces in JSON format:
+`depuzzle` expects traces in JSON format:
 ```json
 {
   "model": "llama3.2:3b",
@@ -196,7 +196,7 @@ Tokens/sec              20.4        25.1        +23%
 
 ## Architecture
 
-`llmprof` consists of two main workflows:
+`depuzzle` consists of two main workflows:
 
 ### 1. Profile Run
 
@@ -206,7 +206,7 @@ The profiling workflow executes an inference run and captures performance data.
       User
         |
         v
-llmprof profile run
+depuzzle profile run
         |
         v
     Profiler
@@ -290,7 +290,7 @@ ruff check .
 Type checking:
 
 ```bash
-mypy llmprof
+mypy depuzzle
 ```
 
 ---

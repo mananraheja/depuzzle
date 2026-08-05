@@ -1,4 +1,4 @@
-from llmprof.mcp_server.tools import profile_model
+from depuzzle.mcp_server.tools import profile_model
 
 
 def test_profile_model_returns_summary(fake_profiler):

@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from llmprof.loaders import load_trace
+from depuzzle.loaders import load_trace
 
 
 def test_load_valid_trace(tmp_path):

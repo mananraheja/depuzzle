@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from llmprof.models import (
+from depuzzle.models import (
     BackendInfo,
     InferenceTrace,
     TokenEvent,

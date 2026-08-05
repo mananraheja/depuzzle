@@ -3,7 +3,7 @@ import subprocess
 
 import pytest
 
-from llmprof.backends.ollama import OllamaBackend
+from depuzzle.backends.ollama import OllamaBackend
 
 
 def ollama_available() -> bool:

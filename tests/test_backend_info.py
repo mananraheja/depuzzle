@@ -1,4 +1,4 @@
-from llmprof.models import BackendInfo
+from depuzzle.models import BackendInfo
 
 
 def test_backend_info_creation():

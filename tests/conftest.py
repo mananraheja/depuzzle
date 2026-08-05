@@ -30,7 +30,7 @@ def fake_profiler(monkeypatch, fake_trace):
             return fake_trace
 
     monkeypatch.setattr(
-        "llmprof.mcp_server.tools.Profiler",
+        "depuzzle.mcp_server.tools.Profiler",
         FakeProfiler,
     )
 

@@ -1,7 +1,7 @@
 import json
 from dataclasses import asdict
 
-from llmprof.models import InferenceTrace
+from depuzzle.models import InferenceTrace
 
 
 def save_trace(
