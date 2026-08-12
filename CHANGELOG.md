@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - TestPyPI package upload and successful clean install
+- PyPI package upload and successful clean install with pip install depuzzle.
 
 ## [0.2.0] - 2026-07-28
 

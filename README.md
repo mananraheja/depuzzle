@@ -1,4 +1,4 @@
-# depuzzle
+# DePuzzle
 
 [![CI](https://github.com/mananraheja/depuzzle/actions/workflows/ci.yml/badge.svg)](https://github.com/mananraheja/depuzzle/actions)
 
@@ -108,6 +108,18 @@ Planned:
 ---
 
 ## Installation
+
+Now available directly on PyPI. Install latest version via:
+
+```bash
+pip install depuzzle
+```
+
+or specific release version via:
+
+```bash
+pip install depuzzle==<version>
+```
 
 Clone the repository:
 
@@ -308,6 +320,7 @@ mypy depuzzle
 - [x] Backend runtime metadata
 - [x] Runtime information in trace summaries
 - [x] Runtime comparison between inference runs
+- [x] PyPI project upload and clean pip install
 
 ### Future
 
