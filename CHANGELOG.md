@@ -2,7 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.2.1] - 2026-07-28
+## [0.2.1] - 2026-08-12
+
+### Fixed
+
+- TestPyPI package upload and successful clean install
+
+## [0.2.0] - 2026-07-28
 
 ### Added
 
