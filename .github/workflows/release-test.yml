@@ -23,6 +23,7 @@ jobs:
         run: |
           VERSION=$(python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['version'])")
           echo "Package version: $VERSION"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Install build and development dependencies
         run: |
@@ -65,7 +66,8 @@ jobs:
           /tmp/depuzzle-test/bin/python -m pip install \
             --index-url https://test.pypi.org/simple/ \
             --extra-index-url https://pypi.org/simple/ \
-            depuzzle
+            --no-cache-dir \
+            "depuzzle==$VERSION"
 
       - name: Smoke test
         run: |
