@@ -316,7 +316,7 @@ mypy depuzzle
 - [x] Compare inference runs
 - [x] GitHub Actions CI
 
-### v0.2.2
+### v0.2.3
 - [x] Backend runtime metadata
 - [x] Runtime information in trace summaries
 - [x] Runtime comparison between inference runs
