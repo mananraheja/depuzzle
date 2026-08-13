@@ -63,11 +63,21 @@ jobs:
 
       - name: Install from TestPyPI
         run: |
-          /tmp/depuzzle-test/bin/python -m pip install \
-            --index-url https://test.pypi.org/simple/ \
-            --extra-index-url https://pypi.org/simple/ \
-            --no-cache-dir \
-            "depuzzle==$VERSION"
+          for i in {1..10}; do
+            if /tmp/depuzzle-test/bin/python -m pip install \
+              --index-url https://test.pypi.org/simple/ \
+              --extra-index-url https://pypi.org/simple/ \
+              --no-cache-dir \
+              "depuzzle==$VERSION"; then
+              exit 0
+            fi
+
+            echo "Package not available yet. Waiting 10 seconds..."
+            sleep 10
+          done
+
+          echo "ERROR: depuzzle==$VERSION was not available on TestPyPI"
+          exit 1
 
       - name: Smoke test
         run: |
