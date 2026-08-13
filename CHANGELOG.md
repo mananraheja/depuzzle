@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.2] - 2026-08-13
+
+### Added
+
+- Separate workflow for Release and Release-Test.
+- Testing release and release-test workflows.
+
 ## [0.2.1] - 2026-08-12
 
 ### Fixed
