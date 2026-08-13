@@ -78,6 +78,19 @@ jobs:
 
           echo "ERROR: depuzzle==$VERSION was not available on TestPyPI"
           exit 1
+      
+      - name: Verify installed version
+        run: |
+          INSTALLED=$(/tmp/depuzzle-test/bin/python -c \
+            "import importlib.metadata; print(importlib.metadata.version('depuzzle'))")
+
+          echo "Expected version: $VERSION"
+          echo "Installed version: $INSTALLED"
+
+          if [ "$INSTALLED" != "$VERSION" ]; then
+            echo "ERROR: installed version does not match expected version"
+            exit 1
+          fi
 
       - name: Smoke test
         run: |
