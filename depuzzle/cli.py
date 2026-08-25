@@ -166,6 +166,11 @@ def run(
         None,
         help="Save trace to JSON file.",
     ),
+    runs: int = typer.Option(
+        1,
+        min=1,
+        help="Number of times to run the inference.",
+    ),
 ):
     """
     Profile a single LLM inference request.
@@ -173,16 +178,22 @@ def run(
 
     backend = OllamaBackend(model=model)
 
+    if runs < 1:
+        raise typer.BadParameter("runs must be at least 1")
+
     profiler = Profiler(backend)
 
-    trace = profiler.run(prompt)
+    traces = [profiler.run(prompt) for _ in range(runs)]
 
-    print_summary(trace)
+    for i, trace in enumerate(traces, start=1):
+        typer.echo(f"\n--- Run {i}/{len(traces)} ---")
+        print_summary(trace)
 
     if output:
-        save_trace(trace, output)
+        for i, trace in enumerate(traces, start=1):
+            save_trace(trace, f"{output}_{i}")
 
-        typer.echo(f"\nTrace saved to {output}")
+        typer.echo(f"\nTraces saved to {output}")
 
 
 @app.command()
