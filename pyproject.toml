@@ -1,6 +1,6 @@
 [project]
 name = "depuzzle"
-version = "0.2.4"
+version = "0.3.0"
 description = "Inference profiler for local LLMs"
 requires-python = ">=3.12,<3.14"
 readme = "README.md"
