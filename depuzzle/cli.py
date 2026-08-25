@@ -191,7 +191,8 @@ def run(
 
     if output:
         for i, trace in enumerate(traces, start=1):
-            save_trace(trace, f"{output}_{i}")
+            filename = f"{output.split('.')[0]}_{i}.json"
+            save_trace(trace, filename)
 
         typer.echo(f"\nTraces saved to {output}")
 
