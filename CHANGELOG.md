@@ -2,6 +2,67 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.0] - 2026-08-25
+
+### Added
+
+- Added explicit inference run lifecycle configuration:
+  - `cold`
+  - `warmup`
+  - `hot`
+
+- Added execution configuration:
+  - `cpu`
+  - `gpu`
+  - `hybrid`
+
+- Added `ProfileConfig` for grouping lifecycle and execution settings.
+
+- Added lifecycle metadata to `InferenceTrace`.
+
+- Added execution configuration metadata to `InferenceTrace`.
+
+- Added backend lifecycle operations:
+  - `prepare()`
+  - `unload()`
+
+- Added Ollama model lifecycle integration for preparing and unloading models.
+
+- Added CLI options for selecting inference lifecycle and execution configuration.
+
+- Added lifecycle-aware profiling behavior.
+
+- Added test coverage for:
+  - lifecycle configuration
+  - lifecycle-aware profiling
+  - trace lifecycle metadata
+  - execution configuration
+  - backend model preparation and unloading
+
+### Changed
+
+- Updated `Profiler` to accept a `ProfileConfig`.
+
+- Updated backend interfaces to support model lifecycle management.
+
+- Updated inference traces to record how each run was configured.
+
+- Updated test fixtures to support lifecycle and execution configuration.
+
+### Testing
+
+- Added unit tests for cold, warmup, and hot profiling behavior.
+
+- Added integration tests for Ollama model preparation and unloading.
+
+- Updated existing profiler, metrics, model, and MCP tests for the new profiling configuration.
+
+### Notes
+
+- Execution device configuration is currently represented in the profiling model and trace.
+- Backend-specific CPU/GPU/hybrid execution control is not yet implemented.
+- Backend runtime statistics, model load time, prefill latency, and decode latency are planned for the next v0.3.x iteration.
+
 ## [0.2.4] - 2026-08-13
 
 ### Added

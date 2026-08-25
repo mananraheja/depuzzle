@@ -72,12 +72,60 @@ runtime
     context_length      131072               131072               same
 ```
 
+### Configure the run lifecycle
+
+DePuzzle supports three inference run lifecycle modes:
+
+- `cold` — unload the model before the measured inference.
+- `warmup` — prepare the model with an unmeasured inference before profiling.
+- `hot` — profile inference without explicitly changing model residency.
+
+Example:
+
+```bash
+depuzzle profile run \
+  --model qwen2.5:3b \
+  --prompt "Explain virtual memory in one paragraph." \
+  --lifecycle cold
+```
+
+For repeated hot runs:
+```bash
+depuzzle profile run \
+  --model qwen2.5:3b \
+  --runs 5 \
+  --lifecycle hot
+```
+
+### Configure execution
+
+DePuzzle also records the intended execution placement:
+
+```bash
+depuzzle profile run \
+  --model qwen2.5:3b \
+  --device gpu
+```
+
+Available execution modes are:
+
+- cpu
+- gpu
+- hybrid
+
+NOTE: Execution placement is currently represented as part of the profiling configuration and trace model. Backend-specific placement control is being implemented incrementally.
+
 ---
 
 ## Features
 
 - Profile local LLM inference runs
 - Capture token-level inference traces
+- Configure inference run lifecycle
+- Profile cold, warmup, and hot runs
+- Configure execution placement
+- Record lifecycle and execution configuration in traces
+- Control backend model preparation and unloading
 - Measure:
   - Total latency
   - Time to First Token (TTFT)
@@ -195,8 +243,13 @@ Tokens/sec              20.4        25.1        +23%
     }
   ],
   "total_latency": 12.0,
-    "time_to_first_token": 1.0,
-    "backend_info": {
+  "time_to_first_token": 1.0,
+  "lifecycle": "hot",
+  "execution": {
+    "device": "cpu",
+    "gpu_layers": null
+  },
+  "backend_info": {
     "backend": "ollama",
     "processor": "72%/28% CPU/GPU",
     "context_length": 131072
@@ -215,24 +268,44 @@ Tokens/sec              20.4        25.1        +23%
 The profiling workflow executes an inference run and captures performance data.
 
 ```bash
-      User
-        |
-        v
-depuzzle profile run
-        |
-        v
-    Profiler
-        |
-        v
-Backend Adapter
-        |
-        v
-  Trace Recorder
-        |
-        v
-   trace.json
+                    User
+                      |
+                      v
+              depuzzle profile run
+                      |
+                      v
+               ProfileConfig
+              /             \
+             /               \
+       Lifecycle          Execution
+             \               /
+              \             /
+                   Profiler
+                      |
+                      v
+                Backend Adapter
+                      |
+              +-------+-------+
+              |               |
+          prepare()        unload()
+              |
+              v
+           Inference
+              |
+              v
+         InferenceTrace
+              |
+              v
+           trace.json
 ```
 
+The profiling configuration consists of:
+
+- **Lifecycle** — controls whether the run is cold, warmup, or hot.
+- **Execution** — describes the intended execution device and backend-specific execution configuration.
+- **Profiler** — coordinates the configured profiling run.
+- **Backend Adapter** — handles backend-specific model preparation, inference, and unloading.
+- **InferenceTrace** — records the configuration and measurements associated with the run.
 
 The generated trace contains:
 - model information
@@ -309,18 +382,46 @@ mypy depuzzle
 
 ## Roadmap
 
-### v0.1.0
+### v0.1.0 - Basic MVP supporting profile run and compare
 - [x] Profile local LLM inference runs
 - [x] Export traces to JSON
 - [x] Calculate latency and throughput metrics
 - [x] Compare inference runs
 - [x] GitHub Actions CI
 
-### v0.2.4
+### v0.2.4 - Added Backend runtime info and release configs
 - [x] Backend runtime metadata
 - [x] Runtime information in trace summaries
 - [x] Runtime comparison between inference runs
 - [x] PyPI project upload and clean pip install
+
+### v0.3.0 — Lifecycle-Aware Profiling
+
+- [x] Run lifecycle
+  - [x] Cold
+  - [x] Warmup
+  - [x] Hot
+- [x] Execution configuration
+  - [x] CPU configuration
+  - [x] GPU configuration abstraction
+  - [x] Hybrid configuration abstraction
+- [x] Lifecycle-aware profiling
+- [x] Lifecycle metadata in traces
+- [x] Execution metadata in traces
+- [x] Backend `prepare()` / `unload()` interface
+- [x] Ollama lifecycle integration
+- [x] Lifecycle test coverage
+
+### v0.3.x — Backend Runtime Instrumentation
+
+- [ ] Capture backend runtime statistics
+- [ ] Model load time
+- [ ] Prefill latency
+- [ ] Decode latency
+- [ ] Decode tokens/sec
+- [ ] CPU vs GPU comparison
+- [ ] Cold vs hot comparison
+- [ ] Execution scaling comparisons
 
 ### Future
 
