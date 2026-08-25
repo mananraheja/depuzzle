@@ -60,6 +60,8 @@ def fake_backend():
 
         def __init__(self, model="fake-model"):
             self.model = model
+            self.prepare_calls = 0
+            self.unload_calls = 0
 
         def generate(self, prompt):
             yield "hello"
@@ -71,5 +73,11 @@ def fake_backend():
                 "processor": "CPU",
                 "context_length": 1000,
             }
+
+        def prepare(self):
+            self.prepare_calls += 1
+
+        def unload(self):
+            self.unload_calls += 1
 
     return FakeBackend()

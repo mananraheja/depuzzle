@@ -1,3 +1,4 @@
+from depuzzle.models import Device, ExecutionConfig, Lifecycle, ProfileConfig
 from depuzzle.profiler import Profiler
 
 
@@ -30,3 +31,45 @@ def test_first_token_latency_exists(fake_backend, profile_config):
     trace = profiler.run("Test")
 
     assert trace.time_to_first_token is not None
+
+
+def test_hot_lifecycle_does_not_prepare_or_unload(fake_backend):
+    config = ProfileConfig(
+        lifecycle=Lifecycle.HOT,
+        execution=ExecutionConfig(device=Device.CPU),
+    )
+
+    profiler = Profiler(fake_backend, config)
+
+    profiler.run("Test")
+
+    assert fake_backend.prepare_calls == 0
+    assert fake_backend.unload_calls == 0
+
+
+def test_warmup_lifecycle_prepares_backend(fake_backend):
+    config = ProfileConfig(
+        lifecycle=Lifecycle.WARMUP,
+        execution=ExecutionConfig(device=Device.CPU),
+    )
+
+    profiler = Profiler(fake_backend, config)
+
+    profiler.run("Test")
+
+    assert fake_backend.prepare_calls == 1
+    assert fake_backend.unload_calls == 0
+
+
+def test_cold_lifecycle_unloads_backend(fake_backend):
+    config = ProfileConfig(
+        lifecycle=Lifecycle.COLD,
+        execution=ExecutionConfig(device=Device.CPU),
+    )
+
+    profiler = Profiler(fake_backend, config)
+
+    profiler.run("Test")
+
+    assert fake_backend.unload_calls == 1
+    assert fake_backend.prepare_calls == 0
