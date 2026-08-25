@@ -73,3 +73,31 @@ def test_cold_lifecycle_unloads_backend(fake_backend):
 
     assert fake_backend.unload_calls == 1
     assert fake_backend.prepare_calls == 0
+
+
+def test_warmup_is_not_included_in_trace(fake_backend):
+    config = ProfileConfig(
+        lifecycle=Lifecycle.WARMUP,
+        execution=ExecutionConfig(device=Device.CPU),
+    )
+
+    profiler = Profiler(fake_backend, config)
+
+    trace = profiler.run("Test")
+
+    assert fake_backend.generate_calls == 2
+    assert len(trace.tokens) == 2
+
+
+def test_trace_records_lifecycle(fake_backend):
+    config = ProfileConfig(
+        lifecycle=Lifecycle.WARMUP,
+        execution=ExecutionConfig(device=Device.CPU),
+    )
+
+    profiler = Profiler(fake_backend, config)
+
+    trace = profiler.run("Test")
+
+    assert trace.lifecycle == Lifecycle.WARMUP
+    assert trace.execution.device == Device.CPU

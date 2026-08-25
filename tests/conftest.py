@@ -62,8 +62,10 @@ def fake_backend():
             self.model = model
             self.prepare_calls = 0
             self.unload_calls = 0
+            self.generate_calls = 0
 
         def generate(self, prompt):
+            self.generate_calls += 1
             yield "hello"
             yield "world"
 
