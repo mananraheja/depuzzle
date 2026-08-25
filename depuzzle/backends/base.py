@@ -12,3 +12,13 @@ class BaseBackend(ABC):
     @abstractmethod
     def get_info(self) -> BackendInfo:
         pass
+
+    @abstractmethod
+    def prepare(self):
+        """Prepare the model for inference."""
+        pass
+
+    @abstractmethod
+    def unload(self):
+        """Unload the model from memory."""
+        pass

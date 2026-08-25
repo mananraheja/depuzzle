@@ -17,6 +17,32 @@ class OllamaBackend(BaseBackend):
         self.model = model
         self.host = host.rstrip("/")
 
+    def _request_model(self, keep_alive: int) -> None:
+        url = f"{self.host}/api/generate"
+
+        payload = {
+            "model": self.model,
+            "prompt": "",
+            "keep_alive": keep_alive,
+            "stream": False,
+        }
+
+        response = httpx.post(
+            url,
+            json=payload,
+            timeout=None,
+        )
+
+        response.raise_for_status()
+
+    def prepare(self) -> None:
+        """Ensure the model remains loaded."""
+        self._request_model(keep_alive=-1)
+
+    def unload(self) -> None:
+        """Unload the model from memory."""
+        self._request_model(keep_alive=0)
+
     def _parse_ollama_ps(self, output: str) -> BackendInfo:
 
         lines = output.strip().splitlines()
@@ -50,7 +76,11 @@ class OllamaBackend(BaseBackend):
 
         return self._parse_ollama_ps(output)
 
-    def generate(self, prompt: str):
+    def generate(
+        self,
+        prompt: str,
+        keep_alive: str | int | None = None,
+    ):
 
         url = f"{self.host}/api/chat"
 
