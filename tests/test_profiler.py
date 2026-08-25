@@ -1,29 +1,9 @@
-from depuzzle.backends.base import BackendInfo
 from depuzzle.profiler import Profiler
 
 
-class FakeBackend:
+def test_profiler_creates_trace(fake_backend, profile_config):
 
-    model = "fake-model"
-
-    def generate(self, prompt):
-
-        yield "Hello"
-        yield " world"
-
-    def get_info(self):
-        return BackendInfo(
-            backend="fake",
-            processor="72%/28% CPU/GPU",
-            context_length=4096,
-        )
-
-
-def test_profiler_creates_trace():
-
-    backend = FakeBackend()
-
-    profiler = Profiler(backend)
+    profiler = Profiler(fake_backend, profile_config)
 
     trace = profiler.run("Say hello")
 
@@ -34,22 +14,18 @@ def test_profiler_creates_trace():
     assert len(trace.tokens) == 2
 
 
-def test_profiler_records_latency():
+def test_profiler_records_latency(fake_backend, profile_config):
 
-    backend = FakeBackend()
-
-    profiler = Profiler(backend)
+    profiler = Profiler(fake_backend, profile_config)
 
     trace = profiler.run("Test")
 
     assert trace.total_latency >= 0
 
 
-def test_first_token_latency_exists():
+def test_first_token_latency_exists(fake_backend, profile_config):
 
-    backend = FakeBackend()
-
-    profiler = Profiler(backend)
+    profiler = Profiler(fake_backend, profile_config)
 
     trace = profiler.run("Test")
 

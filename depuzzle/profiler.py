@@ -3,14 +3,16 @@ from datetime import UTC, datetime
 
 from depuzzle.models import (
     InferenceTrace,
+    ProfileConfig,
     TokenEvent,
 )
 
 
 class Profiler:
 
-    def __init__(self, backend):
+    def __init__(self, backend, config: ProfileConfig):
         self.backend = backend
+        self.config = config
 
     def run(
         self,
@@ -50,5 +52,7 @@ class Profiler:
             tokens=events,
             total_latency=total_latency,
             time_to_first_token=first_token_latency,
+            lifecycle=self.config.lifecycle,
+            execution=self.config.execution,
             backend_info=self.backend.get_info(),
         )

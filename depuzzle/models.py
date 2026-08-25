@@ -1,24 +1,30 @@
 from dataclasses import dataclass
 from datetime import datetime
+from enum import StrEnum
 
-from enum import Enum
 
-
-class Lifecycle(str, Enum):
+class Lifecycle(StrEnum):
     COLD = "cold"
     WARMUP = "warmup"
     HOT = "hot"
 
 
-class Device(str, Enum):
+class Device(StrEnum):
     CPU = "cpu"
     GPU = "gpu"
     HYBRID = "hybrid"
 
+
 @dataclass
-class ExecutionConfig(Enum):
+class ExecutionConfig:
     device: Device
     gpu_layers: int | None = None
+
+
+@dataclass
+class ProfileConfig:
+    lifecycle: Lifecycle
+    execution: ExecutionConfig
 
 
 @dataclass

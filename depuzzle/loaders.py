@@ -77,12 +77,14 @@ def load_trace(path: str | Path) -> InferenceTrace:
     ]
 
     return InferenceTrace(
-        model=data["model"],
-        prompt=data["prompt"],
+        model=data.get("model"),
+        prompt=data.get("prompt"),
         start_time=start_time,
         end_time=end_time,
         tokens=tokens,
-        total_latency=data["total_latency"],
-        time_to_first_token=data["time_to_first_token"],
+        total_latency=data.get("total_latency"),
+        time_to_first_token=data.get("time_to_first_token"),
+        lifecycle=data.get("lifecycle"),
+        execution=data.get("execution"),
         backend_info=backend_info,
     )

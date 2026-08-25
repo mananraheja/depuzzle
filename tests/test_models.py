@@ -1,6 +1,12 @@
 from datetime import UTC, datetime
 
-from depuzzle.models import InferenceTrace, TokenEvent
+from depuzzle.models import (
+    Device,
+    ExecutionConfig,
+    InferenceTrace,
+    Lifecycle,
+    TokenEvent,
+)
 
 
 def test_token_event_creation():
@@ -33,6 +39,8 @@ def test_inference_trace_creation():
         ],
         total_latency=1.5,
         time_to_first_token=0.2,
+        lifecycle=Lifecycle.HOT,
+        execution=ExecutionConfig(device=Device.CPU),
     )
 
     assert trace.model == "qwen2.5:3b"
@@ -54,6 +62,8 @@ def test_empty_trace():
         tokens=[],
         total_latency=0.0,
         time_to_first_token=None,
+        lifecycle=Lifecycle.HOT,
+        execution=ExecutionConfig(device=Device.CPU),
     )
 
     assert len(trace.tokens) == 0

@@ -4,7 +4,13 @@ import pytest
 
 from depuzzle.backends.base import BackendInfo
 from depuzzle.metrics import Metrics
-from depuzzle.models import InferenceTrace, TokenEvent
+from depuzzle.models import (
+    Device,
+    ExecutionConfig,
+    InferenceTrace,
+    Lifecycle,
+    TokenEvent,
+)
 
 
 @pytest.fixture
@@ -40,6 +46,8 @@ def sample_trace():
         tokens=tokens,
         total_latency=10.0,
         time_to_first_token=1.0,
+        lifecycle=Lifecycle.HOT,
+        execution=ExecutionConfig(device=Device.CPU),
         backend_info=backend_info,
     )
 
@@ -99,6 +107,8 @@ def test_tokens_per_second_zero_latency():
         ],
         total_latency=0,
         time_to_first_token=0,
+        lifecycle=Lifecycle.HOT,
+        execution=ExecutionConfig(device=Device.CPU),
     )
 
     metrics = Metrics(trace)

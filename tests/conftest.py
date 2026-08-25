@@ -1,5 +1,7 @@
 import pytest
 
+from depuzzle.models import Device, ExecutionConfig, Lifecycle, ProfileConfig
+
 
 @pytest.fixture
 def fake_trace():
@@ -13,18 +15,32 @@ def fake_trace():
         total_latency = 1.5
         time_to_first_token = 0.2
 
+        lifecycle = Lifecycle.HOT
+        execution = ExecutionConfig(device=Device.CPU)
+
         backend_info = None
 
     return FakeTrace()
 
 
 @pytest.fixture
-def fake_profiler(monkeypatch, fake_trace):
+def profile_config():
+    return ProfileConfig(
+        lifecycle=Lifecycle.HOT,
+        execution=ExecutionConfig(
+            device=Device.CPU,
+        ),
+    )
+
+
+@pytest.fixture
+def fake_profiler(monkeypatch, fake_trace, profile_config):
 
     class FakeProfiler:
 
-        def __init__(self, backend):
+        def __init__(self, backend, config):
             self.backend = backend
+            self.config = config
 
         def run(self, prompt):
             return fake_trace
@@ -42,7 +58,7 @@ def fake_backend():
 
     class FakeBackend:
 
-        def __init__(self, model="test-model"):
+        def __init__(self, model="fake-model"):
             self.model = model
 
         def generate(self, prompt):

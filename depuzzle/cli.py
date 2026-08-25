@@ -8,6 +8,7 @@ from depuzzle.backends.ollama import OllamaBackend
 from depuzzle.exporters import save_trace
 from depuzzle.loaders import load_trace
 from depuzzle.metrics import Metrics
+from depuzzle.models import Device, ExecutionConfig, Lifecycle, ProfileConfig
 from depuzzle.profiler import Profiler
 
 console = Console()
@@ -181,7 +182,12 @@ def run(
     if runs < 1:
         raise typer.BadParameter("runs must be at least 1")
 
-    profiler = Profiler(backend)
+    config = ProfileConfig(
+        lifecycle=Lifecycle.HOT,
+        execution=ExecutionConfig(device=Device.CPU),
+    )
+
+    profiler = Profiler(backend, config)
 
     traces = [profiler.run(prompt) for _ in range(runs)]
 
