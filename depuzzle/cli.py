@@ -8,6 +8,7 @@ from depuzzle.backends.ollama import OllamaBackend
 from depuzzle.exporters import save_trace
 from depuzzle.loaders import load_trace
 from depuzzle.metrics import Metrics
+from depuzzle.models import Device, ExecutionConfig, Lifecycle, ProfileConfig
 from depuzzle.profiler import Profiler
 
 console = Console()
@@ -166,6 +167,19 @@ def run(
         None,
         help="Save trace to JSON file.",
     ),
+    runs: int = typer.Option(
+        1,
+        min=1,
+        help="Number of times to run the inference.",
+    ),
+    lifecycle: Lifecycle = typer.Option(
+        Lifecycle.HOT,
+        help="Run lifecycle: cold, warmup, or hot.",
+    ),
+    device: Device = typer.Option(
+        Device.CPU,
+        help="Execution device: cpu, gpu, or hybrid.",
+    ),
 ):
     """
     Profile a single LLM inference request.
@@ -173,16 +187,28 @@ def run(
 
     backend = OllamaBackend(model=model)
 
-    profiler = Profiler(backend)
+    if runs < 1:
+        raise typer.BadParameter("runs must be at least 1")
 
-    trace = profiler.run(prompt)
+    config = ProfileConfig(
+        lifecycle=lifecycle,
+        execution=ExecutionConfig(device=device),
+    )
 
-    print_summary(trace)
+    profiler = Profiler(backend, config)
+
+    traces = [profiler.run(prompt) for _ in range(runs)]
+
+    for i, trace in enumerate(traces, start=1):
+        typer.echo(f"\n--- Run {i}/{len(traces)} ---")
+        print_summary(trace)
 
     if output:
-        save_trace(trace, output)
+        for i, trace in enumerate(traces, start=1):
+            filename = f"{output.split('.')[0]}_{i}.json"
+            save_trace(trace, filename)
 
-        typer.echo(f"\nTrace saved to {output}")
+        typer.echo(f"\nTraces saved to {output}")
 
 
 @app.command()

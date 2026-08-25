@@ -2,7 +2,10 @@ from datetime import UTC, datetime
 
 from depuzzle.metrics import Metrics
 from depuzzle.models import (
+    Device,
+    ExecutionConfig,
     InferenceTrace,
+    Lifecycle,
     TokenEvent,
 )
 
@@ -32,6 +35,8 @@ def create_trace(
         tokens=tokens,
         total_latency=latency,
         time_to_first_token=ttft,
+        lifecycle=Lifecycle.HOT,
+        execution=ExecutionConfig(device=Device.CPU),
     )
 
 

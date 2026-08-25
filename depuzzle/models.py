@@ -1,5 +1,30 @@
 from dataclasses import dataclass
 from datetime import datetime
+from enum import StrEnum
+
+
+class Lifecycle(StrEnum):
+    COLD = "cold"
+    WARMUP = "warmup"
+    HOT = "hot"
+
+
+class Device(StrEnum):
+    CPU = "cpu"
+    GPU = "gpu"
+    HYBRID = "hybrid"
+
+
+@dataclass
+class ExecutionConfig:
+    device: Device
+    gpu_layers: int | None = None
+
+
+@dataclass
+class ProfileConfig:
+    lifecycle: Lifecycle
+    execution: ExecutionConfig
 
 
 @dataclass
@@ -27,6 +52,9 @@ class InferenceTrace:
 
     total_latency: float
     time_to_first_token: float | None
+
+    lifecycle: Lifecycle
+    execution: ExecutionConfig
 
     backend_info: BackendInfo | None = None
 
