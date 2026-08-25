@@ -172,6 +172,14 @@ def run(
         min=1,
         help="Number of times to run the inference.",
     ),
+    lifecycle: Lifecycle = typer.Option(
+        Lifecycle.HOT,
+        help="Run lifecycle: cold, warmup, or hot.",
+    ),
+    device: Device = typer.Option(
+        Device.CPU,
+        help="Execution device: cpu, gpu, or hybrid.",
+    ),
 ):
     """
     Profile a single LLM inference request.
@@ -183,8 +191,8 @@ def run(
         raise typer.BadParameter("runs must be at least 1")
 
     config = ProfileConfig(
-        lifecycle=Lifecycle.HOT,
-        execution=ExecutionConfig(device=Device.CPU),
+        lifecycle=lifecycle,
+        execution=ExecutionConfig(device=device),
     )
 
     profiler = Profiler(backend, config)
