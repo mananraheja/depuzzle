@@ -4,7 +4,7 @@ import subprocess
 import httpx
 
 from depuzzle.backends.base import BaseBackend
-from depuzzle.models import BackendInfo, RuntimeStats
+from depuzzle.models import BackendInfo, Device, ExecutionConfig, RuntimeStats
 
 
 class OllamaBackend(BaseBackend):
@@ -80,12 +80,19 @@ class OllamaBackend(BaseBackend):
     def generate(
         self,
         prompt: str,
+        execution_config: ExecutionConfig | None = None,
         keep_alive: str | int | None = None,
     ):
 
         self.last_runtime_stats = None
 
         url = f"{self.host}/api/chat"
+
+        options = {}
+
+        if execution_config is not None:
+            if execution_config.device == Device.CPU:
+                options["num_gpu"] = 0
 
         payload = {
             "model": self.model,
@@ -96,6 +103,7 @@ class OllamaBackend(BaseBackend):
                 }
             ],
             "stream": True,
+            "options": options,
         }
 
         with httpx.stream(

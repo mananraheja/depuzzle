@@ -71,7 +71,7 @@ def fake_backend():
             self.unload_calls = 0
             self.generate_calls = 0
 
-        def generate(self, prompt):
+        def generate(self, prompt, execution_config=None):
             self.generate_calls += 1
             yield "hello"
             yield "world"

@@ -39,7 +39,9 @@ class Profiler:
 
         first_token_latency = None
 
-        for token in self.backend.generate(prompt):
+        for token in self.backend.generate(
+            prompt, execution_config=self.config.execution
+        ):
 
             current_time = datetime.now(UTC)
 

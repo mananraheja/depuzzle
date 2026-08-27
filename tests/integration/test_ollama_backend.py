@@ -6,6 +6,7 @@ import time
 import pytest
 
 from depuzzle.backends.ollama import OllamaBackend
+from depuzzle.models import Device, ExecutionConfig
 
 
 def wait_for_model_state(
@@ -139,3 +140,53 @@ def test_generate_captures_runtime_stats(monkeypatch):
     assert backend.last_runtime_stats.prompt_eval_count == 10
     assert backend.last_runtime_stats.eval_duration == 300_000_000
     assert backend.last_runtime_stats.eval_count == 20
+
+
+def test_cpu_device_requests_zero_gpus(monkeypatch):
+    backend = OllamaBackend("llama3.2:3b")
+
+    captured = {}
+
+    class FakeResponse:
+        status_code = 200
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def raise_for_status(self):
+            pass
+
+        def iter_lines(self):
+            return [
+                json.dumps(
+                    {
+                        "message": {"content": "Hello"},
+                        "done": True,
+                    }
+                )
+            ]
+
+    def fake_stream(*args, **kwargs):
+        captured["json"] = kwargs["json"]
+        return FakeResponse()
+
+    monkeypatch.setattr(
+        "depuzzle.backends.ollama.httpx.stream",
+        fake_stream,
+    )
+
+    execution_config = ExecutionConfig(
+        device=Device.CPU,
+    )
+
+    list(
+        backend.generate(
+            "Hello",
+            execution_config=execution_config,
+        )
+    )
+
+    assert captured["json"]["options"]["num_gpu"] == 0
