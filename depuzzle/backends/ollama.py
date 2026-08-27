@@ -4,7 +4,7 @@ import subprocess
 import httpx
 
 from depuzzle.backends.base import BaseBackend
-from depuzzle.models import BackendInfo
+from depuzzle.models import BackendInfo, RuntimeStats
 
 
 class OllamaBackend(BaseBackend):
@@ -16,6 +16,7 @@ class OllamaBackend(BaseBackend):
     ):
         self.model = model
         self.host = host.rstrip("/")
+        self.last_runtime_stats: RuntimeStats | None = None
 
     def _request_model(self, keep_alive: int) -> None:
         url = f"{self.host}/api/generate"
@@ -82,6 +83,8 @@ class OllamaBackend(BaseBackend):
         keep_alive: str | int | None = None,
     ):
 
+        self.last_runtime_stats = None
+
         url = f"{self.host}/api/chat"
 
         payload = {
@@ -114,3 +117,12 @@ class OllamaBackend(BaseBackend):
 
                     if "message" in data:
                         yield data["message"]["content"]
+
+                    if data.get("done"):
+                        self.last_runtime_stats = RuntimeStats(
+                            load_duration=data.get("load_duration"),
+                            prompt_eval_duration=data.get("prompt_eval_duration"),
+                            prompt_eval_count=data.get("prompt_eval_count"),
+                            eval_duration=data.get("eval_duration"),
+                            eval_count=data.get("eval_count"),
+                        )

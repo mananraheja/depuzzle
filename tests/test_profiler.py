@@ -1,4 +1,10 @@
-from depuzzle.models import Device, ExecutionConfig, Lifecycle, ProfileConfig
+from depuzzle.models import (
+    Device,
+    ExecutionConfig,
+    Lifecycle,
+    ProfileConfig,
+    RuntimeStats,
+)
 from depuzzle.profiler import Profiler
 
 
@@ -101,3 +107,24 @@ def test_trace_records_lifecycle(fake_backend):
 
     assert trace.lifecycle == Lifecycle.WARMUP
     assert trace.execution.device == Device.CPU
+
+
+def test_profiler_records_runtime_stats(fake_backend, profile_config):
+    fake_backend.last_runtime_stats = RuntimeStats(
+        load_duration=100_000_000,
+        prompt_eval_duration=200_000_000,
+        prompt_eval_count=10,
+        eval_duration=300_000_000,
+        eval_count=20,
+    )
+
+    profiler = Profiler(fake_backend, profile_config)
+
+    trace = profiler.run("Test")
+
+    assert trace.runtime_stats is not None
+    assert trace.runtime_stats.load_duration == 100_000_000
+    assert trace.runtime_stats.prompt_eval_duration == 200_000_000
+    assert trace.runtime_stats.prompt_eval_count == 10
+    assert trace.runtime_stats.eval_duration == 300_000_000
+    assert trace.runtime_stats.eval_count == 20

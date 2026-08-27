@@ -1,6 +1,12 @@
 import pytest
 
-from depuzzle.models import Device, ExecutionConfig, Lifecycle, ProfileConfig
+from depuzzle.models import (
+    BackendInfo,
+    Device,
+    ExecutionConfig,
+    Lifecycle,
+    ProfileConfig,
+)
 
 
 @pytest.fixture
@@ -60,6 +66,7 @@ def fake_backend():
 
         def __init__(self, model="fake-model"):
             self.model = model
+            self.last_runtime_stats = None
             self.prepare_calls = 0
             self.unload_calls = 0
             self.generate_calls = 0
@@ -70,11 +77,11 @@ def fake_backend():
             yield "world"
 
         def get_info(self):
-            return {
-                "backend": "fake",
-                "processor": "CPU",
-                "context_length": 1000,
-            }
+            return BackendInfo(
+                backend="fake",
+                processor="CPU",
+                context_length=1024,
+            )
 
         def prepare(self):
             self.prepare_calls += 1
