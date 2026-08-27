@@ -41,6 +41,15 @@ class BackendInfo:
 
 
 @dataclass
+class RuntimeStats:
+    load_duration: float | None = None
+    prompt_eval_duration: float | None = None
+    prompt_eval_count: int | None = None
+    eval_duration: float | None = None
+    eval_count: int | None = None
+
+
+@dataclass
 class InferenceTrace:
     model: str
     prompt: str
@@ -56,6 +65,7 @@ class InferenceTrace:
     lifecycle: Lifecycle
     execution: ExecutionConfig
 
+    runtime_stats: RuntimeStats | None = None
     backend_info: BackendInfo | None = None
 
 

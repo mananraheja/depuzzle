@@ -67,5 +67,6 @@ class Profiler:
             time_to_first_token=first_token_latency,
             lifecycle=self.config.lifecycle,
             execution=self.config.execution,
+            runtime_stats=self.backend.last_runtime_stats,
             backend_info=self.backend.get_info(),
         )
