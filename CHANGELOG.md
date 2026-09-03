@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1] - 2026-09-03
+
 ### Added
 
 - Added backend-specific CPU, GPU, and hybrid execution control for Ollama.
