@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import typer
-
 from rich import box
 from rich.console import Console
 from rich.table import Table
@@ -170,10 +169,7 @@ def trace_filename(
     else:
         device_name = device.value
 
-    return (
-        f"{model_name}_{device_name}_"
-        f"{lifecycle.value}_run_{run_number}.json"
-    )
+    return f"{model_name}_{device_name}_" f"{lifecycle.value}_run_{run_number}.json"
 
 
 @profile_app.command()
@@ -210,7 +206,7 @@ def run(
     gpu_layers: int = typer.Option(
         None,
         help="Number of GPU layers to use for hybrid execution.",
-    )
+    ),
 ):
     """
     Profile a single LLM inference request.
@@ -222,9 +218,7 @@ def run(
         raise typer.BadParameter("runs must be at least 1")
 
     if output and runs > 1:
-        raise typer.BadParameter(
-            "--output can only be used with --runs 1"
-        )
+        raise typer.BadParameter("--output can only be used with --runs 1")
 
     config = ProfileConfig(
         lifecycle=lifecycle,
@@ -248,9 +242,7 @@ def run(
 
         if output:
             if runs > 1:
-                raise typer.BadParameter(
-                    "--output can only be used with --runs 1"
-                )
+                raise typer.BadParameter("--output can only be used with --runs 1")
 
             trace_path = Path(output)
 
