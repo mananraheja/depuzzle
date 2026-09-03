@@ -35,7 +35,7 @@ For hybrid CPU/GPU execution, specify the number of layers to offload:
 depuzzle profile run \
   --model llama3.2:3b \
   --device hybrid \
-  --gpu-layers 14
+  --gpu_layers 14
 ```
 
 Run multiple independent measurements:
@@ -91,10 +91,10 @@ depuzzle profile run \
 depuzzle profile run \
   --model llama3.2:3b \
   --device hybrid \
-  --gpu-layers 14
+  --gpu_layers 14
 ```
 
-For hybrid execution, --gpu-layers specifies how many model layers are requested for GPU offloading.
+For hybrid execution, --gpu_layers specifies how many model layers are requested for GPU offloading.
 
 ### Multiple runs
 
