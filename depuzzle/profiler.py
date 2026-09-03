@@ -10,14 +10,16 @@ from depuzzle.models import (
 
 
 class Profiler:
-
     def __init__(self, backend, config: ProfileConfig):
         self.backend = backend
         self.config = config
 
     def _warmup(self, prompt: str) -> None:
         """Run a warmup inference to prepare the model for profiling."""
-        for _ in self.backend.generate(prompt):
+        for _ in self.backend.generate(
+            prompt,
+            execution_config=self.config.execution,
+        ):
             pass
 
     def run(
@@ -39,8 +41,9 @@ class Profiler:
 
         first_token_latency = None
 
-        for token in self.backend.generate(prompt):
-
+        for token in self.backend.generate(
+            prompt, execution_config=self.config.execution
+        ):
             current_time = datetime.now(UTC)
 
             if first_token_latency is None:

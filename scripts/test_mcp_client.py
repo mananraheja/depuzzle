@@ -8,7 +8,6 @@ from depuzzle.mcp_server.server import mcp
 async def main():
 
     async with Client(mcp) as client:
-
         print("Connected!")
 
         tools = await client.list_tools()

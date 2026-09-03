@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
 
-from depuzzle.models import BackendInfo
+from depuzzle.models import BackendInfo, ExecutionConfig
 
 
 class BaseBackend(ABC):
-
     @abstractmethod
-    def generate(self, prompt):
+    def generate(self, prompt, execution_config: ExecutionConfig | None = None):
         pass
 
     @abstractmethod
