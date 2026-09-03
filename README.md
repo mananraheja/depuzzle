@@ -4,114 +4,120 @@
 
 A lightweight Python tool for profiling, analyzing, and comparing LLM inference performance.
 
-`depuzzle` helps developers profile local LLM inference runs, capture token-level traces, and compare performance across models and configurations.
+`depuzzle` helps developers profile local LLM inference runs, capture token-level traces, and compare performance across models, lifecycle states, and execution configurations.
 
 ---
 
 ## Usage
 
-### Profile an LLM inference run
-
-depuzzle can profile local LLM inference requests and capture token-level timing information.
-
-Example:
+### Profile an inference run
 
 ```bash
 depuzzle profile run \
-  --model qwen2.5:3b \
-  --prompt "Explain virtual memory in one paragraph." \
-  --output run1.json
+  --model llama3.2:3b \
+  --prompt "Explain virtual memory in one paragraph."
 ```
 
-Example output:
+By default, depuzzle runs a hot inference using CPU execution and saves the trace under traces/.
 
-```bash
---- Trace Summary ---
-
-model: qwen2.5:3b
-tokens: 633
-latency_seconds: 31.13s
-ttft_seconds: 4.71s
-tokens_per_second: 20.33
-
-runtime:
-  backend: ollama
-  processor: 72%/28% CPU/GPU
-  context_length: 131072
-
-Trace saved to run1.json
-```
-
-### Compare inference runs
-
-depuzzle can compare two inference traces to evaluate model performance differences.
-
-Example:
-
-```bash
-depuzzle compare sample_traces/run1.json sample_traces/run2.json
-```
-
-Example output:
-
-```bash
---- Comparison ---
-
-Metric                   Run 1               Run 2               Change
-------------------------------------------------------------------------------------------
-model                    qwen2.5:3b          llama3.2:3b         -
-tokens                   633                 555                 -12.32%
-latency_seconds          31.13               28.41               -8.74% (faster)
-ttft_seconds             4.71                6.98                +48.07% (slower)
-tokens_per_second        20.33               19.53               -3.93% (worse)
-
-
-runtime
-    backend             ollama               ollama               same
-    processor           72%/28% CPU/GPU      100% CPU             changed
-    context_length      131072               131072               same
-```
-
-### Configure the run lifecycle
-
-DePuzzle supports three inference run lifecycle modes:
-
-- `cold` — unload the model before the measured inference.
-- `warmup` — prepare the model with an unmeasured inference before profiling.
-- `hot` — profile inference without explicitly changing model residency.
-
-Example:
+You can control the profiling lifecycle and execution device:
 
 ```bash
 depuzzle profile run \
-  --model qwen2.5:3b \
-  --prompt "Explain virtual memory in one paragraph." \
-  --lifecycle cold
-```
-
-For repeated hot runs:
-```bash
-depuzzle profile run \
-  --model qwen2.5:3b \
-  --runs 5 \
-  --lifecycle hot
-```
-
-### Configure execution
-
-DePuzzle also records the intended execution placement:
-
-```bash
-depuzzle profile run \
-  --model qwen2.5:3b \
+  --model llama3.2:3b \
+  --lifecycle cold \
   --device gpu
 ```
 
-Available execution modes are:
+For hybrid CPU/GPU execution, specify the number of layers to offload:
 
-- cpu
-- gpu
-- hybrid
+```bash
+depuzzle profile run \
+  --model llama3.2:3b \
+  --device hybrid \
+  --gpu-layers 14
+```
+
+Run multiple independent measurements:
+
+```bash
+depuzzle profile run \
+  --model llama3.2:3b \
+  --runs 5
+```
+
+Each run is saved as a separate trace artifact, allowing the results to be analyzed later.
+
+### Compare inference runs
+
+```bash
+depuzzle compare traces/run1.json traces/run2.json
+```
+
+This compares key inference metrics between two profiling runs, including latency, time to first token, tokens per second, and runtime statistics.
+
+### Lifecycle configuration
+
+depuzzle supports three profiling lifecycle states:
+
+- cold — unload the model before the measured inference.
+- warmup — prepare the model and perform an unmeasured warmup inference before measurement.
+- hot — measure inference with the model already loaded.
+
+Example:
+
+```bash
+depuzzle profile run \
+  --model llama3.2:3b \
+  --lifecycle cold
+```
+
+### Execution configuration
+
+Execution can be configured for CPU, GPU, or hybrid CPU/GPU placement.
+
+```bash
+# CPU
+depuzzle profile run \
+  --model llama3.2:3b \
+  --device cpu
+
+# GPU
+depuzzle profile run \
+  --model llama3.2:3b \
+  --device gpu
+
+# Hybrid CPU/GPU
+depuzzle profile run \
+  --model llama3.2:3b \
+  --device hybrid \
+  --gpu-layers 14
+```
+
+For hybrid execution, --gpu-layers specifies how many model layers are requested for GPU offloading.
+
+### Multiple runs
+
+Use --runs to collect multiple independent inference traces:
+
+```bash
+depuzzle profile run \
+  --model llama3.2:3b \
+  --runs 5
+```
+
+Each run is stored as a separate JSON trace under the output directory:
+
+```bash
+traces/
+├── llama3.2_3b_cpu_hot_run_1.json
+├── llama3.2_3b_cpu_hot_run_2.json
+├── llama3.2_3b_cpu_hot_run_3.json
+├── llama3.2_3b_cpu_hot_run_4.json
+└── llama3.2_3b_cpu_hot_run_5.json
+```
+
+This allows repeated measurements to be analyzed independently and provides the foundation for benchmark aggregation and statistical analysis.
 
 NOTE: Execution placement is currently represented as part of the profiling configuration and trace model. Backend-specific placement control is being implemented incrementally.
 
@@ -251,7 +257,7 @@ Tokens/sec              20.4        25.1        +23%
   },
   "backend_info": {
     "backend": "ollama",
-    "processor": "72%/28% CPU/GPU",
+    "processor": "100% CPU",
     "context_length": 131072
   }
 }
@@ -411,6 +417,8 @@ mypy depuzzle
 - [x] Backend `prepare()` / `unload()` interface
 - [x] Ollama lifecycle integration
 - [x] Lifecycle test coverage
+- [x] CPU vs GPU comparison
+- [x] Cold vs hot comparison
 
 ### v0.3.x — Backend Runtime Instrumentation
 
@@ -419,8 +427,6 @@ mypy depuzzle
 - [ ] Prefill latency
 - [ ] Decode latency
 - [ ] Decode tokens/sec
-- [ ] CPU vs GPU comparison
-- [ ] Cold vs hot comparison
 - [ ] Execution scaling comparisons
 
 ### Future

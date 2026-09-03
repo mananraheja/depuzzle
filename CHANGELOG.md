@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file.
 
+### Added
+
+- Added backend-specific CPU, GPU, and hybrid execution control for Ollama.
+- Added GPU layer configuration for hybrid execution.
+- Added automatic transformer layer-count detection from Ollama model metadata.
+- Added repeated inference runs with the `--runs` CLI option.
+- Added separate JSON trace artifacts for each profiling run.
+- Added deterministic trace filenames based on model, execution configuration, lifecycle, and run number.
+
+### Changed
+
+- Updated Ollama execution configuration to control GPU layer offloading.
+- Updated CPU execution to request zero GPU layers.
+- Updated GPU execution to request all available model layers.
+- Updated hybrid execution to require an explicit GPU layer count.
+- Updated profiling output to display each inference run independently.
+
+### Testing
+
+- Added integration tests for CPU, GPU, and hybrid execution configuration.
+- Added integration tests for dynamic transformer layer-count detection.
+- Added validation tests for invalid hybrid GPU layer configurations.
+- Added tests for repeated profiling runs and trace output.
+- Verified single-run, multi-run, and invalid output configurations through the CLI.
+
 ## [0.3.0] - 2026-08-25
 
 ### Added

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import typer
 from rich import box
 from rich.console import Console
@@ -153,6 +155,23 @@ def print_summary(trace):
             typer.echo(f"{key}: {value}")
 
 
+def trace_filename(
+    model: str,
+    device: Device,
+    lifecycle: Lifecycle,
+    run_number: int,
+    gpu_layers: int | None = None,
+) -> str:
+    model_name = model.replace(":", "_").replace("/", "_")
+
+    if device == Device.HYBRID:
+        device_name = f"hybrid_{gpu_layers}"
+    else:
+        device_name = device.value
+
+    return f"{model_name}_{device_name}_" f"{lifecycle.value}_run_{run_number}.json"
+
+
 @profile_app.command()
 def run(
     model: str = typer.Option(
@@ -167,6 +186,10 @@ def run(
         None,
         help="Save trace to JSON file.",
     ),
+    output_dir: str = typer.Option(
+        "traces",
+        help="Directory to save traces.",
+    ),
     runs: int = typer.Option(
         1,
         min=1,
@@ -180,6 +203,10 @@ def run(
         Device.CPU,
         help="Execution device: cpu, gpu, or hybrid.",
     ),
+    gpu_layers: int = typer.Option(
+        None,
+        help="Number of GPU layers to use for hybrid execution.",
+    ),
 ):
     """
     Profile a single LLM inference request.
@@ -190,25 +217,47 @@ def run(
     if runs < 1:
         raise typer.BadParameter("runs must be at least 1")
 
+    if output and runs > 1:
+        raise typer.BadParameter("--output can only be used with --runs 1")
+
     config = ProfileConfig(
         lifecycle=lifecycle,
-        execution=ExecutionConfig(device=device),
+        execution=ExecutionConfig(
+            device=device,
+            gpu_layers=gpu_layers,
+        ),
     )
 
     profiler = Profiler(backend, config)
 
-    traces = [profiler.run(prompt) for _ in range(runs)]
+    if not output:
+        output_path = Path(output_dir)
+        output_path.mkdir(parents=True, exist_ok=True)
 
-    for i, trace in enumerate(traces, start=1):
-        typer.echo(f"\n--- Run {i}/{len(traces)} ---")
+    for run_number in range(1, runs + 1):
+        trace = profiler.run(prompt)
+
+        typer.echo(f"\n--- Run {run_number}/{runs} ---")
         print_summary(trace)
 
-    if output:
-        for i, trace in enumerate(traces, start=1):
-            filename = f"{output.split('.')[0]}_{i}.json"
-            save_trace(trace, filename)
+        if output:
+            if runs > 1:
+                raise typer.BadParameter("--output can only be used with --runs 1")
 
-        typer.echo(f"\nTraces saved to {output}")
+            trace_path = Path(output)
+
+        else:
+            filename = trace_filename(
+                model=model,
+                device=device,
+                lifecycle=lifecycle,
+                run_number=run_number,
+                gpu_layers=gpu_layers,
+            )
+            trace_path = output_path / filename
+
+        save_trace(trace, str(trace_path))
+        typer.echo(f"Saved: {trace_path}")
 
 
 @app.command()
