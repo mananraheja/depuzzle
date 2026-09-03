@@ -8,7 +8,6 @@ from depuzzle.models import BackendInfo, Device, ExecutionConfig, RuntimeStats
 
 
 class OllamaBackend(BaseBackend):
-
     def __init__(
         self,
         model: str,
@@ -77,6 +76,36 @@ class OllamaBackend(BaseBackend):
 
         return self._parse_ollama_ps(output)
 
+    def get_model_info(self) -> dict:
+        """Return model metadata from Ollama."""
+        url = f"{self.host}/api/show"
+
+        response = httpx.post(
+            url,
+            json={"model": self.model},
+            timeout=None,
+        )
+        response.raise_for_status()
+
+        data = response.json()
+        return data.get("model_info", {})
+
+    def get_layer_count(self) -> int:
+        """Return the number of transformer blocks in the model."""
+        model_info = self.get_model_info()
+
+        architecture = model_info.get("general.architecture")
+        if not architecture:
+            raise RuntimeError("Model architecture not found")
+
+        key = f"{architecture}.block_count"
+        layer_count = model_info.get(key)
+
+        if layer_count is None:
+            raise RuntimeError(f"Layer count not found in Ollama model metadata: {key}")
+
+        return int(layer_count)
+
     def generate(
         self,
         prompt: str,
@@ -93,6 +122,26 @@ class OllamaBackend(BaseBackend):
         if execution_config is not None:
             if execution_config.device == Device.CPU:
                 options["num_gpu"] = 0
+
+            elif execution_config.device == Device.GPU:
+                options["num_gpu"] = self.get_layer_count()
+
+            elif execution_config.device == Device.HYBRID:
+                print(execution_config.gpu_layers)
+                if execution_config.gpu_layers is None:
+                    raise ValueError(
+                        "gpu_layers must be specified for hybrid execution"
+                    )
+
+                layer_count = self.get_layer_count()
+
+                if not 0 < execution_config.gpu_layers < layer_count:
+                    raise ValueError(
+                        f"gpu_layers must be between 1 and {layer_count - 1} for \
+                            hybrid execution"
+                    )
+
+                options["num_gpu"] = execution_config.gpu_layers
 
         payload = {
             "model": self.model,
@@ -112,14 +161,12 @@ class OllamaBackend(BaseBackend):
             json=payload,
             timeout=None,
         ) as response:
-
             if response.status_code != 200:
                 print(response.text)
 
             response.raise_for_status()
 
             for line in response.iter_lines():
-
                 if line:
                     data = json.loads(line)
 

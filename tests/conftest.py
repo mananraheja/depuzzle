@@ -43,7 +43,6 @@ def profile_config():
 def fake_profiler(monkeypatch, fake_trace, profile_config):
 
     class FakeProfiler:
-
         def __init__(self, backend, config):
             self.backend = backend
             self.config = config
@@ -63,7 +62,6 @@ def fake_profiler(monkeypatch, fake_trace, profile_config):
 def fake_backend():
 
     class FakeBackend:
-
         def __init__(self, model="fake-model"):
             self.model = model
             self.last_runtime_stats = None
