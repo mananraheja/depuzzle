@@ -69,19 +69,21 @@ def ollama_model_installed(model: str) -> bool:
 @pytest.mark.integration
 def test_backend_info():
 
+    model = "llama3.2:3b"
     if not ollama_available():
         pytest.skip("Ollama binary not installed")
+    if not ollama_model_installed(model):
+        pytest.skip(f"Ollama model {model} is not installed")
 
-    backend = OllamaBackend("llama3.2:3b")
-
-    if not ollama_model_running("llama3.2:3b"):
-        pytest.skip("No running Ollama model available")
-
-    info = backend.get_info()
-
-    assert info.backend == "ollama"
-    assert info.processor != ""
-    assert info.context_length > 0
+    backend = OllamaBackend(model)
+    backend.prepare()
+    try:
+        info = backend.get_info()
+        assert info.backend == "ollama"
+        assert info.processor != ""
+        assert info.context_length > 0
+    finally:
+        backend.unload()
 
 
 def test_get_model_info(monkeypatch):
