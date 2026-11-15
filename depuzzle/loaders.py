@@ -21,7 +21,11 @@ def validate_trace_schema(data: dict, path: str):
         raise ValueError(f"Invalid trace format: expected a JSON object in {path}")
 
     schema_version = data.get("schema_version", TRACE_SCHEMA_VERSION)
-    if type(schema_version) is not int or schema_version != TRACE_SCHEMA_VERSION:
+    if (
+        isinstance(schema_version, bool)
+        or not isinstance(schema_version, int)
+        or schema_version != TRACE_SCHEMA_VERSION
+    ):
         raise ValueError(
             f"Unsupported trace schema version {schema_version!r} in {path}"
         )
@@ -100,7 +104,7 @@ def _load_optional_models(data: dict):
             if value is not None and (
                 isinstance(value, bool)
                 or not isinstance(value, (int, float))
-                or not math.isfinite(value)
+                or (isinstance(value, float) and not math.isfinite(value))
                 or value < 0
             ):
                 raise ValueError(
@@ -109,7 +113,9 @@ def _load_optional_models(data: dict):
                 )
         for field in count_fields:
             value = stats_data.get(field)
-            if value is not None and (type(value) is not int or value < 0):
+            if value is not None and (
+                isinstance(value, bool) or not isinstance(value, int) or value < 0
+            ):
                 raise ValueError(
                     f"Invalid trace format: runtime_stats.{field} "
                     "must be a non-negative integer"
