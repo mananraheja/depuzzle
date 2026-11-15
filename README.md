@@ -119,7 +119,7 @@ traces/
 
 This allows repeated measurements to be analyzed independently and provides the foundation for benchmark aggregation and statistical analysis.
 
-NOTE: Execution placement is currently represented as part of the profiling configuration and trace model. Backend-specific placement control is being implemented incrementally.
+Ollama currently applies CPU, GPU, and hybrid placement requests through its `num_gpu` option. GPU and hybrid settings use the model's detected transformer layer count. Actual placement remains subject to Ollama and the host's available hardware.
 
 ---
 
@@ -140,6 +140,11 @@ NOTE: Execution placement is currently represented as part of the profiling conf
   - Backend
   - CPU/GPU processor split
   - Context length
+- Capture Ollama runtime measurements
+  - Model load duration
+  - Prompt evaluation duration and token count
+  - Generation duration and token count
+  - Prompt and generation tokens per second
 - Export traces as JSON
 - Compare inference runs
 - Automated testing with GitHub Actions
@@ -238,6 +243,7 @@ Tokens/sec              20.4        25.1        +23%
 `depuzzle` expects traces in JSON format:
 ```json
 {
+  "schema_version": 1,
   "model": "llama3.2:3b",
   "prompt": "Hello world",
   "start_time": "2026-07-22T10:00:00",
@@ -259,9 +265,18 @@ Tokens/sec              20.4        25.1        +23%
     "backend": "ollama",
     "processor": "100% CPU",
     "context_length": 131072
+  },
+  "runtime_stats": {
+    "load_duration": 100000000,
+    "prompt_eval_duration": 200000000,
+    "prompt_eval_count": 42,
+    "eval_duration": 300000000,
+    "eval_count": 17
   }
 }
 ```
+
+New traces include `schema_version`. Unversioned traces from earlier releases are still interpreted as schema version 1. `runtime_stats` is optional and may contain unavailable measurements as `null`.
 
 ---
 
@@ -422,11 +437,11 @@ mypy depuzzle
 
 ### v0.3.x — Backend Runtime Instrumentation
 
-- [ ] Capture backend runtime statistics
-- [ ] Model load time
-- [ ] Prefill latency
-- [ ] Decode latency
-- [ ] Decode tokens/sec
+- [x] Capture backend runtime statistics
+- [x] Model load time
+- [x] Prefill latency
+- [x] Decode latency
+- [x] Decode tokens/sec
 - [ ] Execution scaling comparisons
 
 ### Future
