@@ -14,10 +14,7 @@ from depuzzle.models import (
 
 def create_trace(model, latency, ttft, token_count, runtime_stats=None):
     now = datetime(2026, 7, 24, tzinfo=UTC)
-    tokens = [
-        TokenEvent(token=f"token-{i}", timestamp=now)
-        for i in range(token_count)
-    ]
+    tokens = [TokenEvent(token=f"token-{i}", timestamp=now) for i in range(token_count)]
     return InferenceTrace(
         model=model,
         prompt="test prompt",
