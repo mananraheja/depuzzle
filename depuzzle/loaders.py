@@ -1,4 +1,5 @@
 import json
+import math
 from datetime import datetime
 from pathlib import Path
 
@@ -20,7 +21,7 @@ def validate_trace_schema(data: dict, path: str):
         raise ValueError(f"Invalid trace format: expected a JSON object in {path}")
 
     schema_version = data.get("schema_version", TRACE_SCHEMA_VERSION)
-    if not isinstance(schema_version, int) or schema_version != TRACE_SCHEMA_VERSION:
+    if type(schema_version) is not int or schema_version != TRACE_SCHEMA_VERSION:
         raise ValueError(
             f"Unsupported trace schema version {schema_version!r} in {path}"
         )
@@ -88,6 +89,31 @@ def _load_optional_models(data: dict):
         stats_data = data["runtime_stats"]
         if not isinstance(stats_data, dict):
             raise ValueError("Invalid trace format: runtime_stats must be an object")
+        duration_fields = (
+            "load_duration",
+            "prompt_eval_duration",
+            "eval_duration",
+        )
+        count_fields = ("prompt_eval_count", "eval_count")
+        for field in duration_fields:
+            value = stats_data.get(field)
+            if value is not None and (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(value)
+                or value < 0
+            ):
+                raise ValueError(
+                    f"Invalid trace format: runtime_stats.{field} "
+                    "must be a finite non-negative number"
+                )
+        for field in count_fields:
+            value = stats_data.get(field)
+            if value is not None and (type(value) is not int or value < 0):
+                raise ValueError(
+                    f"Invalid trace format: runtime_stats.{field} "
+                    "must be a non-negative integer"
+                )
         try:
             runtime_stats = RuntimeStats(**stats_data)
         except TypeError as exc:
