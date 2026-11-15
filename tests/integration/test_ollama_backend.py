@@ -56,7 +56,11 @@ def ollama_model_installed(model: str) -> bool:
         check=True,
     )
 
-    return any(line.split() and line.split()[0] == model for line in result.stdout.splitlines()[1:])
+    for line in result.stdout.splitlines()[1:]:
+        columns = line.split()
+        if columns and columns[0] == model:
+            return True
+    return False
 
 
 @pytest.mark.integration
@@ -553,7 +557,9 @@ def test_real_inference_trace_round_trip(tmp_path):
     assert trace.time_to_first_token is not None
     assert trace.runtime_stats is not None
     assert trace.runtime_stats.prompt_eval_count is not None
+    assert trace.runtime_stats.prompt_eval_count > 0
     assert trace.runtime_stats.eval_count is not None
+    assert trace.runtime_stats.eval_count > 0
     assert trace.runtime_stats.prompt_eval_duration is not None
     assert trace.runtime_stats.eval_duration is not None
     assert trace.backend_info is not None
