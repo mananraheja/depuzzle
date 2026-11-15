@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from depuzzle.cli import add_runtime_stats_comparison, format_change
+from depuzzle.cli import format_change
 from depuzzle.metrics import Metrics
 from depuzzle.models import (
     Device,
@@ -73,7 +73,7 @@ def test_runtime_stats_summary_and_comparison_are_available():
         "generation_tokens_per_second",
         summary1["ollama"]["generation_tokens_per_second"],
         summary2["ollama"]["generation_tokens_per_second"],
-    ) == "+100.00%"
+    ) == "[green]+100.00% (better)[/green]"
 
     # Missing backend measurements must be displayed as unavailable, not zero.
     assert summary1["ollama"]["load_duration_seconds"] == 0.1
