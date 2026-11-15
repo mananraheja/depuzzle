@@ -180,3 +180,77 @@ def test_invalid_optional_configuration_is_rejected(tmp_path):
     path.write_text(json.dumps(data), encoding="utf-8")
     with pytest.raises(ValueError, match="invalid execution"):
         load_trace(path)
+
+
+
+def test_boolean_schema_version_is_rejected(tmp_path):
+    path = tmp_path / "boolean-schema-version.json"
+    data = {
+        "schema_version": True,
+        "model": "test",
+        "prompt": "",
+        "start_time": "2026-07-22T10:00:00",
+        "end_time": "2026-07-22T10:00:01",
+        "tokens": [],
+        "total_latency": 1.0,
+        "time_to_first_token": None,
+    }
+    path.write_text(json.dumps(data), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Unsupported trace schema version"):
+        load_trace(path)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("load_duration", "100"),
+        ("prompt_eval_duration", True),
+        ("eval_duration", float("inf")),
+        ("load_duration", -1),
+        ("prompt_eval_duration", float("nan")),
+    ],
+)
+def test_invalid_runtime_duration_is_rejected(tmp_path, field, value):
+    path = tmp_path / "invalid-runtime-duration.json"
+    data = {
+        "model": "test",
+        "prompt": "",
+        "start_time": "2026-07-22T10:00:00",
+        "end_time": "2026-07-22T10:00:01",
+        "tokens": [],
+        "total_latency": 1.0,
+        "time_to_first_token": None,
+        "runtime_stats": {field: value},
+    }
+    path.write_text(json.dumps(data), encoding="utf-8")
+
+    with pytest.raises(ValueError, match=f"runtime_stats\\.{field}"):
+        load_trace(path)
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("prompt_eval_count", 1.5),
+        ("eval_count", "17"),
+        ("prompt_eval_count", True),
+        ("eval_count", -1),
+    ],
+)
+def test_invalid_runtime_count_is_rejected(tmp_path, field, value):
+    path = tmp_path / "invalid-runtime-count.json"
+    data = {
+        "model": "test",
+        "prompt": "",
+        "start_time": "2026-07-22T10:00:00",
+        "end_time": "2026-07-22T10:00:01",
+        "tokens": [],
+        "total_latency": 1.0,
+        "time_to_first_token": None,
+        "runtime_stats": {field: value},
+    }
+    path.write_text(json.dumps(data), encoding="utf-8")
+
+    with pytest.raises(ValueError, match=f"runtime_stats\\.{field}"):
+        load_trace(path)
