@@ -42,10 +42,10 @@ def ollama_model_running(model: str) -> bool:
         ["ollama", "ps"],
         capture_output=True,
         text=True,
-        check=True,
+        check=False,
     )
 
-    return model in result.stdout
+    return result.returncode == 0 and model in result.stdout
 
 
 def ollama_model_installed(model: str) -> bool:
@@ -53,8 +53,11 @@ def ollama_model_installed(model: str) -> bool:
         ["ollama", "list"],
         capture_output=True,
         text=True,
-        check=True,
+        check=False,
     )
+
+    if result.returncode != 0:
+        return False
 
     for line in result.stdout.splitlines()[1:]:
         columns = line.split()
