@@ -20,7 +20,10 @@ def validate_trace_schema(data: dict, path: str):
         raise ValueError(f"Invalid trace format: expected a JSON object in {path}")
 
     schema_version = data.get("schema_version", TRACE_SCHEMA_VERSION)
-    if not isinstance(schema_version, int) or schema_version != TRACE_SCHEMA_VERSION:
+    if (
+        not isinstance(schema_version, int)
+        or schema_version != TRACE_SCHEMA_VERSION
+    ):
         raise ValueError(
             f"Unsupported trace schema version {schema_version!r} in {path}"
         )
@@ -93,7 +96,9 @@ def _load_optional_models(data: dict):
         try:
             runtime_stats = RuntimeStats(**stats_data)
         except TypeError as exc:
-            raise ValueError("Invalid trace format: invalid runtime_stats fields") from exc
+            raise ValueError(
+                "Invalid trace format: invalid runtime_stats fields"
+            ) from exc
 
     backend_info = None
     if data.get("backend_info") is not None:
@@ -107,7 +112,9 @@ def _load_optional_models(data: dict):
                 context_length=info_data["context_length"],
             )
         except (KeyError, TypeError) as exc:
-            raise ValueError("Invalid trace format: invalid backend_info fields") from exc
+            raise ValueError(
+                "Invalid trace format: invalid backend_info fields"
+            ) from exc
 
     return lifecycle, execution, runtime_stats, backend_info
 
