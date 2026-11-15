@@ -69,11 +69,14 @@ def test_runtime_stats_summary_and_comparison_are_available():
 
     assert summary1["ollama"]["generation_tokens_per_second"] == 100
     assert summary2["ollama"]["generation_tokens_per_second"] == 200
-    assert format_change(
-        "generation_tokens_per_second",
-        summary1["ollama"]["generation_tokens_per_second"],
-        summary2["ollama"]["generation_tokens_per_second"],
-    ) == "[green]+100.00% (better)[/green]"
+    assert (
+        format_change(
+            "generation_tokens_per_second",
+            summary1["ollama"]["generation_tokens_per_second"],
+            summary2["ollama"]["generation_tokens_per_second"],
+        )
+        == "[green]+100.00% (better)[/green]"
+    )
 
     # Missing backend measurements must be displayed as unavailable, not zero.
     assert summary1["ollama"]["load_duration_seconds"] == 0.1
