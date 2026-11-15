@@ -6,7 +6,15 @@ import time
 import pytest
 
 from depuzzle.backends.ollama import OllamaBackend
-from depuzzle.models import Device, ExecutionConfig
+from depuzzle.exporters import save_trace
+from depuzzle.loaders import load_trace
+from depuzzle.models import (
+    Device,
+    ExecutionConfig,
+    Lifecycle,
+    ProfileConfig,
+)
+from depuzzle.profiler import Profiler
 
 
 def wait_for_model_state(
@@ -38,6 +46,17 @@ def ollama_model_running(model: str) -> bool:
     )
 
     return model in result.stdout
+
+
+def ollama_model_installed(model: str) -> bool:
+    result = subprocess.run(
+        ["ollama", "list"],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+
+    return any(line.split() and line.split()[0] == model for line in result.stdout.splitlines()[1:])
 
 
 @pytest.mark.integration
@@ -510,3 +529,43 @@ def test_cpu_device_requests_zero_gpus(monkeypatch):
     )
 
     assert captured["json"]["options"]["num_gpu"] == 0
+
+
+
+@pytest.mark.integration
+def test_real_inference_trace_round_trip(tmp_path):
+    model = "llama3.2:3b"
+
+    if not ollama_available():
+        pytest.skip("Ollama binary not installed")
+
+    if not ollama_model_installed(model):
+        pytest.skip(f"Ollama model {model} is not installed")
+
+    backend = OllamaBackend(model)
+    config = ProfileConfig(
+        lifecycle=Lifecycle.WARMUP,
+        execution=ExecutionConfig(device=Device.CPU),
+    )
+    trace = Profiler(backend, config).run("Reply with one short word: ready")
+
+    assert trace.tokens
+    assert trace.time_to_first_token is not None
+    assert trace.runtime_stats is not None
+    assert trace.runtime_stats.prompt_eval_count is not None
+    assert trace.runtime_stats.eval_count is not None
+    assert trace.runtime_stats.prompt_eval_duration is not None
+    assert trace.runtime_stats.eval_duration is not None
+    assert trace.backend_info is not None
+    assert trace.backend_info.backend == "ollama"
+    assert trace.backend_info.context_length > 0
+
+    path = tmp_path / "ollama-inference-trace.json"
+    save_trace(trace, str(path))
+    loaded = load_trace(path)
+
+    assert loaded.lifecycle == Lifecycle.WARMUP
+    assert loaded.execution == config.execution
+    assert loaded.runtime_stats == trace.runtime_stats
+    assert loaded.backend_info == trace.backend_info
+    assert loaded.tokens == trace.tokens
