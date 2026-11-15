@@ -376,10 +376,12 @@ Run tests:
 pytest -m "not integration"
 ```
 
-Run integration tests (requires Ollama and downloaded local models):
+Run integration tests (requires a running Ollama service and the `llama3.2:3b` model):
 ```bash
 pytest -m integration
 ```
+
+The live Ollama tests skip when the Ollama binary, service, or required model is unavailable. The regular CI suite excludes these hardware/service-dependent tests; run them locally before a release.
 
 Format code:
 
