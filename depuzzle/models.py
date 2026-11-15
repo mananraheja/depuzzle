@@ -62,8 +62,9 @@ class InferenceTrace:
     total_latency: float
     time_to_first_token: float | None
 
-    lifecycle: Lifecycle
-    execution: ExecutionConfig
+    # None means the field was not present in a legacy trace.
+    lifecycle: Lifecycle | None
+    execution: ExecutionConfig | None
 
     runtime_stats: RuntimeStats | None = None
     backend_info: BackendInfo | None = None
