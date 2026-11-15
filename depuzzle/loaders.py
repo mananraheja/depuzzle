@@ -37,9 +37,7 @@ def validate_trace_schema(data: dict, path: str):
 
     for field in required_fields:
         if field not in data:
-            raise ValueError(
-                f"Invalid trace format: missing field '{field}' in {path}"
-            )
+            raise ValueError(f"Invalid trace format: missing field '{field}' in {path}")
 
     if not isinstance(data["model"], str):
         raise ValueError("Invalid trace format: model must be a string")
