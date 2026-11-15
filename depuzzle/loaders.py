@@ -37,7 +37,9 @@ def validate_trace_schema(data: dict, path: str):
 
     for field in required_fields:
         if field not in data:
-            raise ValueError(f"Invalid trace format: missing field '{field}' in {path}")
+            raise ValueError(
+                f"Invalid trace format: missing field '{field}' in {path}"
+            )
 
     if not isinstance(data["model"], str):
         raise ValueError("Invalid trace format: model must be a string")
@@ -49,14 +51,18 @@ def validate_trace_schema(data: dict, path: str):
         raise ValueError("Invalid trace format: tokens must be a list")
 
     for index, token in enumerate(data["tokens"]):
-        if not isinstance(token, dict) or "token" not in token or "timestamp" not in token:
+        if (
+            not isinstance(token, dict)
+            or "token" not in token
+            or "timestamp" not in token
+        ):
             raise ValueError(
                 f"Invalid trace format: token at index {index} must contain "
                 "'token' and 'timestamp'"
             )
 
 
-def _load_optional_models(data: dict, path: str):
+def _load_optional_models(data: dict):
     lifecycle = None
     if data.get("lifecycle") is not None:
         try:
@@ -75,7 +81,9 @@ def _load_optional_models(data: dict, path: str):
                 gpu_layers=execution_data.get("gpu_layers"),
             )
         except (TypeError, ValueError) as exc:
-            raise ValueError("Invalid trace format: invalid execution configuration") from exc
+            raise ValueError(
+                "Invalid trace format: invalid execution configuration"
+            ) from exc
 
     runtime_stats = None
     if data.get("runtime_stats") is not None:
@@ -132,11 +140,11 @@ def load_trace(path: str | Path) -> InferenceTrace:
             for token in data["tokens"]
         ]
     except (TypeError, ValueError) as exc:
-        raise ValueError("Invalid trace format: invalid timestamp or token event") from exc
+        raise ValueError(
+            "Invalid trace format: invalid timestamp or token event"
+        ) from exc
 
-    lifecycle, execution, runtime_stats, backend_info = _load_optional_models(
-        data, str(path)
-    )
+    lifecycle, execution, runtime_stats, backend_info = _load_optional_models(data)
 
     return InferenceTrace(
         model=data["model"],
