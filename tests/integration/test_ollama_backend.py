@@ -406,19 +406,22 @@ def test_backend_prepare_and_unload():
     if not ollama_available():
         pytest.skip("Ollama binary not installed")
 
-    backend = OllamaBackend("llama3.2:3b")
+    model = "llama3.2:3b"
+    if not ollama_model_installed(model):
+        pytest.skip(f"Ollama model {model} is not installed")
 
+    backend = OllamaBackend(model)
     backend.prepare()
 
     assert wait_for_model_state(
-        "llama3.2:3b",
+        model,
         running=True,
     )
 
     backend.unload()
 
     assert wait_for_model_state(
-        "llama3.2:3b",
+        model,
         running=False,
     )
 
