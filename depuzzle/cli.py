@@ -37,8 +37,11 @@ def format_change(key, value1, value2):
             return f"[red]{change:+.2f}% (slower)[/red]"
         return f"[green]{change:+.2f}% (faster)[/green]"
 
-    if key in ["tokens_per_second", "generation_tokens_per_second",
-               "prompt_tokens_per_second"]:
+    if key in [
+        "tokens_per_second",
+        "generation_tokens_per_second",
+        "prompt_tokens_per_second",
+    ]:
         if change > 0:
             return f"[green]{change:+.2f}% (better)[/green]"
         return f"[red]{change:+.2f}% (worse)[/red]"
