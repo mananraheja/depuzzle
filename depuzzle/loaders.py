@@ -20,10 +20,7 @@ def validate_trace_schema(data: dict, path: str):
         raise ValueError(f"Invalid trace format: expected a JSON object in {path}")
 
     schema_version = data.get("schema_version", TRACE_SCHEMA_VERSION)
-    if (
-        not isinstance(schema_version, int)
-        or schema_version != TRACE_SCHEMA_VERSION
-    ):
+    if not isinstance(schema_version, int) or schema_version != TRACE_SCHEMA_VERSION:
         raise ValueError(
             f"Unsupported trace schema version {schema_version!r} in {path}"
         )
