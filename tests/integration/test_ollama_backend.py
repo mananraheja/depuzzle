@@ -541,7 +541,6 @@ def test_cpu_device_requests_zero_gpus(monkeypatch):
     assert captured["json"]["options"]["num_gpu"] == 0
 
 
-
 @pytest.mark.integration
 def test_real_inference_trace_round_trip(tmp_path):
     model = "llama3.2:3b"
