@@ -182,7 +182,6 @@ def test_invalid_optional_configuration_is_rejected(tmp_path):
         load_trace(path)
 
 
-
 def test_boolean_schema_version_is_rejected(tmp_path):
     path = tmp_path / "boolean-schema-version.json"
     data = {
