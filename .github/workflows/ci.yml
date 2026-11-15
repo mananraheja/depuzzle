@@ -42,10 +42,6 @@ jobs:
         run: |
           python -m pytest -m "not integration"
 
-      - name: Diagnose formatting
-        run: |
-          python -m black --diff depuzzle/loaders.py tests/test_compare_metrics.py || true
-
       - name: Check formatting
         run: |
           python -m black --check .
