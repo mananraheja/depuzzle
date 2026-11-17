@@ -6,7 +6,15 @@ import time
 import pytest
 
 from depuzzle.backends.ollama import OllamaBackend
-from depuzzle.models import Device, ExecutionConfig
+from depuzzle.exporters import save_trace
+from depuzzle.loaders import load_trace
+from depuzzle.models import (
+    Device,
+    ExecutionConfig,
+    Lifecycle,
+    ProfileConfig,
+)
+from depuzzle.profiler import Profiler
 
 
 def wait_for_model_state(
@@ -34,28 +42,48 @@ def ollama_model_running(model: str) -> bool:
         ["ollama", "ps"],
         capture_output=True,
         text=True,
-        check=True,
+        check=False,
     )
 
-    return model in result.stdout
+    return result.returncode == 0 and model in result.stdout
+
+
+def ollama_model_installed(model: str) -> bool:
+    result = subprocess.run(
+        ["ollama", "list"],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    if result.returncode != 0:
+        return False
+
+    for line in result.stdout.splitlines()[1:]:
+        columns = line.split()
+        if columns and columns[0] == model:
+            return True
+    return False
 
 
 @pytest.mark.integration
 def test_backend_info():
 
+    model = "llama3.2:3b"
     if not ollama_available():
         pytest.skip("Ollama binary not installed")
+    if not ollama_model_installed(model):
+        pytest.skip(f"Ollama model {model} is not installed")
 
-    backend = OllamaBackend("llama3.2:3b")
-
-    if not ollama_model_running("llama3.2:3b"):
-        pytest.skip("No running Ollama model available")
-
-    info = backend.get_info()
-
-    assert info.backend == "ollama"
-    assert info.processor != ""
-    assert info.context_length > 0
+    backend = OllamaBackend(model)
+    backend.prepare()
+    try:
+        info = backend.get_info()
+        assert info.backend == "ollama"
+        assert info.processor != ""
+        assert info.context_length > 0
+    finally:
+        backend.unload()
 
 
 def test_get_model_info(monkeypatch):
@@ -383,19 +411,22 @@ def test_backend_prepare_and_unload():
     if not ollama_available():
         pytest.skip("Ollama binary not installed")
 
-    backend = OllamaBackend("llama3.2:3b")
+    model = "llama3.2:3b"
+    if not ollama_model_installed(model):
+        pytest.skip(f"Ollama model {model} is not installed")
 
+    backend = OllamaBackend(model)
     backend.prepare()
 
     assert wait_for_model_state(
-        "llama3.2:3b",
+        model,
         running=True,
     )
 
     backend.unload()
 
     assert wait_for_model_state(
-        "llama3.2:3b",
+        model,
         running=False,
     )
 
@@ -510,3 +541,44 @@ def test_cpu_device_requests_zero_gpus(monkeypatch):
     )
 
     assert captured["json"]["options"]["num_gpu"] == 0
+
+
+@pytest.mark.integration
+def test_real_inference_trace_round_trip(tmp_path):
+    model = "llama3.2:3b"
+
+    if not ollama_available():
+        pytest.skip("Ollama binary not installed")
+
+    if not ollama_model_installed(model):
+        pytest.skip(f"Ollama model {model} is not installed")
+
+    backend = OllamaBackend(model)
+    config = ProfileConfig(
+        lifecycle=Lifecycle.WARMUP,
+        execution=ExecutionConfig(device=Device.CPU),
+    )
+    trace = Profiler(backend, config).run("Reply with one short word: ready")
+
+    assert trace.tokens
+    assert trace.time_to_first_token is not None
+    assert trace.runtime_stats is not None
+    assert trace.runtime_stats.prompt_eval_count is not None
+    assert trace.runtime_stats.prompt_eval_count > 0
+    assert trace.runtime_stats.eval_count is not None
+    assert trace.runtime_stats.eval_count > 0
+    assert trace.runtime_stats.prompt_eval_duration is not None
+    assert trace.runtime_stats.eval_duration is not None
+    assert trace.backend_info is not None
+    assert trace.backend_info.backend == "ollama"
+    assert trace.backend_info.context_length > 0
+
+    path = tmp_path / "ollama-inference-trace.json"
+    save_trace(trace, str(path))
+    loaded = load_trace(path)
+
+    assert loaded.lifecycle == Lifecycle.WARMUP
+    assert loaded.execution == config.execution
+    assert loaded.runtime_stats == trace.runtime_stats
+    assert loaded.backend_info == trace.backend_info
+    assert loaded.tokens == trace.tokens

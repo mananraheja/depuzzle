@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.2] - 2026-11-16
+
+### Added
+
+- Added a versioned JSON trace schema (`schema_version: 1`).
+- Preserved compatibility with legacy traces that do not include a schema version.
+- Added strict validation for runtime durations and token counts when loading traces.
+- Added a live Ollama integration test covering warmup, measured inference, runtime statistics, backend metadata, and trace save/load round-tripping.
+
+### Changed
+
+- Reconstruct typed lifecycle, execution, backend metadata, and runtime statistics when loading traces.
+- Improved comparison output for missing runtime measurements.
+
+### Testing
+
+- Added regression tests rejecting boolean schema versions, invalid or negative runtime durations, non-finite durations, and invalid token counts.
+- Added end-to-end Ollama inference coverage for local environments with the `llama3.2:3b` model installed.
+
 ## [0.3.1] - 2026-09-03
 
 ### Added
