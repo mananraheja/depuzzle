@@ -119,7 +119,7 @@ traces/
 
 This allows repeated measurements to be analyzed independently and provides the foundation for benchmark aggregation and statistical analysis.
 
-Ollama currently applies CPU, GPU, and hybrid placement requests through its `num_gpu` option. GPU and hybrid settings use the model's detected transformer layer count. Actual placement remains subject to Ollama and the host's available hardware.
+Ollama currently applies CPU, GPU, and hybrid placement requests through its `num_gpu` option. GPU execution requests offloading all detected transformer layers. Hybrid execution accepts an explicit GPU layer count, validated against the model's detected transformer layer count. Actual placement remains subject to Ollama and the host's available hardware.
 
 ---
 
